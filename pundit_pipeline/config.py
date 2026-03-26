@@ -47,9 +47,9 @@ RECENCY_FULL = 24
 RECENCY_HALF = 48
 RECENCY_OLD = 72
 
-# Selenium paths
-CHROME_PATH = "/Users/allanodora/Downloads/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-DRIVER_PATH = "/Users/allanodora/Downloads/chromedriver-mac-arm64/chromedriver"
+# Selenium paths (optional). Prefer env vars so this repo stays portable.
+CHROME_PATH = os.environ.get("CHROME_PATH", "")
+DRIVER_PATH = os.environ.get("DRIVER_PATH", "")
 
 # Database
 DB_PATH = "pipeline.db"
@@ -57,11 +57,9 @@ DB_PATH = "pipeline.db"
 # Output
 OUTPUT_DIR = "output"
 
-# TrendStage per-story topic output path
-# Set this to your TrendStage topics folder, e.g.:
-TRENDSTAGE_TOPICS_PATH = (
-    "/Users/allanodora/Documents/new Allan/clean up/opt wprl/webapp/topics"
-)
+# TrendStage per-story topic output path (optional)
+# Example: export TRENDSTAGE_TOPICS_PATH="$(pwd)/webapp/topics"
+TRENDSTAGE_TOPICS_PATH = os.environ.get("TRENDSTAGE_TOPICS_PATH", "")
 
 # Pipeline modes
 PIPELINE_MODE = os.environ.get("PIPELINE_MODE", "LIVE")  # LIVE, CACHED, HISTORICAL

@@ -197,7 +197,7 @@ def auto_fix_and_update():
     print(new_config[:500] + "..." if len(new_config) > 500 else new_config)
 
     # Save to file
-    output_path = "/Users/allanodora/Documents/new Allan/clean up/opt wprl/pundit_pipeline/source_fetchers/updated_feeds.txt"
+    output_path = str(Path(__file__).resolve().parent / "updated_feeds.txt")
     with open(output_path, "w") as f:
         f.write(new_config)
 

@@ -43,7 +43,7 @@ Assets go to `webapp/assets/`:
 
 Generate fresh topics and auto-populate the webapp:
 ```bash
-export TRENDSTAGE_TOPICS_PATH="/Users/allanodora/Documents/new Allan/clean up/opt wprl/webapp/topics"
+export TRENDSTAGE_TOPICS_PATH="$(pwd)/webapp/topics"
 cd pundit_pipeline/pipeline
 python3 run_pipeline_v2.py
 ```
