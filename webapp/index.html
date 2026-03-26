@@ -128,6 +128,29 @@ body.recording .notes-toggle-btn { display: none; }
 .obs-status.connected { background: var(--success); color: #000; }
 .obs-status.disconnected { background: var(--text-muted); color: #fff; }
 
+.end-session-btn {
+  font-size: 0.6rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(239,68,68,0.35);
+  background: rgba(239,68,68,0.18);
+  color: #ffb4b4;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.end-session-btn:hover {
+  background: rgba(239,68,68,0.28);
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .topic-list { flex: 1; overflow-y: auto; padding: 8px 0; }
 
 .topic-item {
@@ -1672,7 +1695,10 @@ body.recording .keyboard-hints { opacity: 1; }
         <div class="panel-brand">Crimson's Web App</div>
         <span class="panel-title">Topics</span>
       </div>
-      <span class="obs-status disconnected" id="obsStatus">OBS</span>
+      <div class="panel-actions">
+        <button class="end-session-btn" onclick="event.stopPropagation();endSession()" title="Stop the local server">END</button>
+        <span class="obs-status disconnected" id="obsStatus">OBS</span>
+      </div>
     </div>
     <div class="topic-list" id="topicList"></div>
     <!-- Notes Toggle Button -->
@@ -3154,6 +3180,19 @@ window.addEventListener('keydown', (e) => {
 function scrollNoteIntoView() {
   const activeNote = document.querySelector('.note-item.active');
   if (activeNote) activeNote.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function endSession() {
+  const ok = confirm('End session? This will stop the local server started by start.py.');
+  if (!ok) return;
+  try {
+    await fetch('/__shutdown', { method: 'POST' });
+  } catch (e) {
+    alert('Could not reach the shutdown endpoint. If you started the server in a terminal, press Ctrl+C there to stop it.');
+    return;
+  }
+  // Server is stopping; navigate away so the UI doesn't keep trying to load.
+  location.href = 'about:blank';
 }
 
 // Start

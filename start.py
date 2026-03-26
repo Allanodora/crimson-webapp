@@ -4,9 +4,32 @@ import os
 import socket
 import subprocess
 import sys
+import threading
 from contextlib import closing
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+
+class TrendStageHandler(SimpleHTTPRequestHandler):
+    def do_POST(self):
+        if self.path.rstrip("/") == "/__shutdown":
+            # Only allow shutdown from the local machine.
+            client_ip = (self.client_address[0] or "").strip()
+            if client_ip not in ("127.0.0.1", "::1"):
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b"forbidden")
+                return
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(b"shutting down")
+
+            threading.Thread(target=self.server.shutdown, daemon=True).start()
+            return
+
+        return super().do_POST()
 
 
 def _repo_root() -> Path:
@@ -54,7 +77,7 @@ def _serve_webapp(repo_root: Path, host: str, port: int):
         return 2
 
     os.chdir(str(webapp_dir))
-    httpd = ThreadingHTTPServer((host, port), SimpleHTTPRequestHandler)
+    httpd = ThreadingHTTPServer((host, port), TrendStageHandler)
     url = f"http://localhost:{port}/index.html"
     print(f"[start] Serving webapp from {webapp_dir}")
     print(f"[start] Open: {url}")
@@ -98,4 +121,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
