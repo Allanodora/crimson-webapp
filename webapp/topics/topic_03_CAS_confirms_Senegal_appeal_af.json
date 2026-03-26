@@ -1,0 +1,168 @@
+{
+  "name": "CAS confirms Senegal appeal after AFCON title controversially stripped",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "sky_sports",
+    "score": 55,
+    "tier": 2,
+    "tier_label": "📌 Story",
+    "flags": [
+      "debatable",
+      "core_topic",
+      "take_angle",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "type": "tech",
+    "chart": {
+      "label": "Trending Now",
+      "type": "line",
+      "talk_point": "This story is gaining momentum",
+      "data": {
+        "labels": [
+          "1h ago",
+          "30m ago",
+          "15m ago",
+          "Now"
+        ],
+        "datasets": [
+          {
+            "label": "Interest",
+            "data": [
+              40,
+              65,
+              85,
+              100
+            ],
+            "borderColor": "#3B82F6",
+            "backgroundColor": "rgba(59, 130, 246, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }
+        ]
+      }
+    },
+    "talk_point": "This story is gaining momentum"
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "CAS confirms Senegal appeal after AFCON title controversially stripped",
+      "description": "The Court of Arbitration for Sport (CAS) have confirmed an appeal from Senegal which aims to overturn the controversial decision to strip them of their AFCON title.",
+      "thumbnail": "assets/topic_images/topic_104e383c538ac951.jpg",
+      "url": "https://www.skysports.com/football/news/12040/13524339/africa-cup-of-nations-cas-confirms-senegal-appeal-after-controversial-decision-to-strip-them-of-afcon-title",
+      "publisher": "Sky Sports",
+      "published_at": "2026-03-18"
+    },
+    "quote_image": {
+      "text": "The Court of Arbitration for Sport (CAS) have confirmed an appeal from Senegal which aims to overturn the controversial decision to strip them of their AFCON title.",
+      "image": "assets/topic_images/topic_60cbd49127355f90.png",
+      "summary": "The Court of Arbitration for Sport (CAS) have confirmed an appeal from Senegal which aims to overturn the controversial decision to strip them of thei..."
+    },
+    "video_suggestions": [
+      "AFCON",
+      "confirms",
+      "Senegal",
+      "appeal",
+      "title",
+      "controversially",
+      "stripped"
+    ],
+    "browser": {
+      "summary": "The Court of Arbitration for Sport (CAS) have confirmed an appeal from Senegal which aims to overturn the controversial decision to strip them of thei.",
+      "keywords": [
+        "AFCON",
+        "confirms",
+        "Senegal",
+        "appeal",
+        "title",
+        "controversially",
+        "stripped"
+      ],
+      "search_query": "AFCON confirms Senegal appeal",
+      "videos": [],
+      "articles": [],
+      "video_suggestions": [
+        "AFCON",
+        "confirms",
+        "Senegal",
+        "appeal",
+        "title",
+        "controversially",
+        "stripped"
+      ],
+      "has_content": false
+    }
+  },
+  "reactions": [
+    {
+      "author": "u_Sparky-moon",
+      "avatar": "https://i.pravatar.cc/150?u=Sparky-m",
+      "text": "The fine imposed on Ismael Saibari, who had tried to steal Édouard Mendy's towel during the AFCON final, has been overturned by CAF.",
+      "likes": 5928,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/soccer/comments/1rwwiy3/the_fine_imposed_on_ismael_saibari_who_had_tried/",
+      "replies": 472,
+      "keyword_matches": 4,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_Timely-Zombie9466",
+      "avatar": "https://i.pravatar.cc/150?u=Timely-Z",
+      "text": "Official: CAS confirms Senegalese Football Federation has appealed the decision to call Morocco as winners of the AFCON 2025, asking to restore Senegal as the original winners. Appeal registered by CA",
+      "likes": 512,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/soccer/comments/1s3fq4z/official_cas_confirms_senegalese_football/",
+      "replies": 122,
+      "keyword_matches": 4,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_Timely-Zombie9466",
+      "avatar": "https://i.pravatar.cc/150?u=Timely-Z",
+      "text": "Official: CAS confirms Senegalese Football Federation has appealed the decision to call Morocco as winners of the AFCON 2025, asking to restore Senegal as the original winners. Appeal registered by CA",
+      "likes": 505,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/soccer/comments/1s3fq4z/official_cas_confirms_senegalese_football/",
+      "replies": 122,
+      "keyword_matches": 4,
+      "subreddit": "r/premierleague"
+    },
+    {
+      "author": "u_Timely-Zombie9466",
+      "avatar": "https://i.pravatar.cc/150?u=Timely-Z",
+      "text": "Official: CAS confirms Senegalese Football Federation has appealed the decision to call Morocco as winners of the AFCON 2025, asking to restore Senegal as the original winners. Appeal registered by CA",
+      "likes": 503,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/soccer/comments/1s3fq4z/official_cas_confirms_senegalese_football/",
+      "replies": 122,
+      "keyword_matches": 4,
+      "subreddit": "r/chelseafc"
+    },
+    {
+      "author": "u_Tall_Pressure7042",
+      "avatar": "https://i.pravatar.cc/150?u=Tall_Pre",
+      "text": "Official: CAS confirms Senegalese Football Federation has appealed the decision to call Morocco as winners of the AFCON 2025, asking to restore Senegal as the original winners. Appeal registered by CA",
+      "likes": 3,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/football/comments/1s3h2lb/official_cas_confirms_senegalese_football/",
+      "replies": 2,
+      "keyword_matches": 4,
+      "subreddit": "r/soccer"
+    }
+  ],
+  "source": {
+    "title": "CAS confirms Senegal appeal after AFCON title controversially stripped",
+    "publisher": "Sky Sports",
+    "url": "https://www.skysports.com/football/news/12040/13524339/africa-cup-of-nations-cas-confirms-senegal-appeal-after-controversial-decision-to-strip-them-of-afcon-title",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Story: CAS confirms Senegal appeal after AFCON title controversially stripped"
+  ]
+}

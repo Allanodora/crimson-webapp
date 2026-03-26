@@ -1,0 +1,171 @@
+{
+  "name": "National League icon agrees with Keir Starmer and Jeff Stelling over extra EFL promotion spot",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "mirror",
+    "score": 55,
+    "tier": 2,
+    "tier_label": "📌 Story",
+    "flags": [
+      "debatable",
+      "fresh",
+      "core_topic",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "states": [
+      "controversy",
+      "social_buzz",
+      "sentiment"
+    ],
+    "data": {
+      "controversy": {
+        "label": "Controversy Level Over Time",
+        "type": "line",
+        "data": {
+          "labels": [
+            "Match 1",
+            "Match 2",
+            "Match 3",
+            "Match 4",
+            "Match 5"
+          ],
+          "datasets": [
+            {
+              "label": "Controversy Score",
+              "data": [
+                20,
+                45,
+                70,
+                90,
+                85
+              ],
+              "borderColor": "#ef4444",
+              "backgroundColor": "rgba(239,68,68,0.1)",
+              "fill": true,
+              "tension": 0.4
+            }
+          ]
+        }
+      },
+      "social_buzz": {
+        "label": "Social Media Reaction",
+        "type": "bar",
+        "data": {
+          "labels": [
+            "X/Twitter",
+            "Reddit",
+            "Instagram",
+            "TikTok",
+            "YouTube"
+          ],
+          "datasets": [
+            {
+              "label": "Posts (thousands)",
+              "data": [
+                245,
+                189,
+                156,
+                312,
+                178
+              ],
+              "backgroundColor": [
+                "#1da1f2",
+                "#ff4500",
+                "#e1306c",
+                "#010101",
+                "#ff0000"
+              ]
+            }
+          ]
+        }
+      },
+      "sentiment": {
+        "label": "Fan Sentiment",
+        "type": "doughnut",
+        "data": {
+          "labels": [
+            "Outraged",
+            "Disappointed",
+            "Neutral",
+            "Supportive"
+          ],
+          "datasets": [
+            {
+              "data": [
+                45,
+                32,
+                15,
+                8
+              ],
+              "backgroundColor": [
+                "#dc2626",
+                "#f59e0b",
+                "#6b7280",
+                "#22c55e"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "National League icon agrees with Keir Starmer and Jeff Stelling over extra EFL promotion spot",
+      "description": "Ian Henderson, the Rochdale icon, has delivered his verdict on the National League's '3UP campaign, the season so far and the race to win promotion to League Two",
+      "thumbnail": "https://picsum.photos/seed/00072663/800/450",
+      "url": "https://www.mirror.co.uk/sport/football/news/national-league-rochdale-efl-henderson-36922694",
+      "publisher": "Mirror",
+      "published_at": "2026-03-25"
+    }
+  },
+  "reactions": [
+    {
+      "author": "FootballFanatic_UK",
+      "avatar": "https://i.pravatar.cc/150?u=ff1",
+      "text": "Absolute robbery! This is why football is broken right now.",
+      "likes": 2341,
+      "platform": "twitter"
+    },
+    {
+      "author": "PremierLeagueFan",
+      "avatar": "https://i.pravatar.cc/150?u=pl2",
+      "text": "I've seen this happen 3 times this season. Something needs to change.",
+      "likes": 1876,
+      "platform": "reddit"
+    },
+    {
+      "author": "CoachMike_Tactics",
+      "avatar": "https://i.pravatar.cc/150?u=cm3",
+      "text": "Tactically this makes no sense. The setup was all wrong from the start.",
+      "likes": 892,
+      "platform": "twitter"
+    },
+    {
+      "author": "SoccerStatsDaily",
+      "avatar": "https://i.pravatar.cc/150?u=sd4",
+      "text": "The numbers don't lie. This has been a pattern all season.",
+      "likes": 654,
+      "platform": "reddit"
+    }
+  ],
+  "source": {
+    "title": "National League icon agrees with Keir Starmer and Jeff Stelling over extra EFL promotion spot",
+    "publisher": "Mirror",
+    "url": "https://www.mirror.co.uk/sport/football/news/national-league-rochdale-efl-henderson-36922694",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Right let's talk football — National League icon agrees with Keir Starmer and Jeff Stelling over extra EFL p",
+    "Here's what we know: Ian Henderson, the Rochdale icon, has delivered his verdict on the National League's '3UP campaign, the season so far and the race to win promotion to",
+    "Source on this is mirror — worth reading the full thing after.",
+    "Let me know in the comments — am I wrong? Because I could be wrong."
+  ]
+}

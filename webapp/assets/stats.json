@@ -1,0 +1,19 @@
+{
+  "views": {
+    "value": 7441170,
+    "formatted": "7.4M",
+    "trend": "up"
+  },
+  "engagement": {
+    "value": 33,
+    "formatted": "33%",
+    "trend": "up"
+  },
+  "velocity": {
+    "value": 98,
+    "formatted": "+98%",
+    "trend": "up"
+  },
+  "sentiment": "positive",
+  "trending_score": 89
+}

@@ -1,0 +1,55 @@
+{
+  "topic": "Chelsea VAR",
+  "event": "Chelsea VAR explained",
+  "timestamp": "2026-03-24T14:03:40.645413",
+  "elements": {
+    "graph": {
+      "states": [
+        "graph_0.png",
+        "graph_1.png",
+        "graph_2.png",
+        "graph_3.png"
+      ],
+      "zone": "left",
+      "default_state": 0
+    },
+    "clip": {
+      "src": "clip_preview.png",
+      "zone": "right"
+    },
+    "comments": {
+      "data": "comments.json",
+      "zone": "bottom"
+    },
+    "stats": {
+      "data": "stats.json",
+      "zone": "top"
+    }
+  },
+  "layout": {
+    "graph": {
+      "x": 60,
+      "y": 80,
+      "width": 840,
+      "height": 620
+    },
+    "clip": {
+      "x": 980,
+      "y": 80,
+      "width": 880,
+      "height": 620
+    },
+    "comments": {
+      "x": 60,
+      "y": 750,
+      "width": 1800,
+      "height": 200
+    },
+    "stats": {
+      "x": 60,
+      "y": 15,
+      "width": 1800,
+      "height": 50
+    }
+  }
+}

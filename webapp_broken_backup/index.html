@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage Recorder</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #161616;
+  --bg-tertiary: #1a1a1a;
+  --border: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.3);
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+body {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+  overflow: hidden;
+  display: flex;
+}
+.app-container { display: flex; flex: 1; height: 100%; }
+
+/* Side Panel */
+.side-panel {
+  width: 280px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.panel-header {
+  padding: 16px 20px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+.obs-status {
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.obs-status.connected { background: var(--success); color: #000; }
+.obs-status.disconnected { background: var(--text-muted); color: #fff; }
+.topic-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.topic-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+}
+.topic-item:hover { background: var(--bg-tertiary); }
+.topic-item.active {
+  background: var(--bg-tertiary);
+  border-left-color: var(--accent);
+}
+.topic-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.topic-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 8px; }
+.topic-category { color: var(--accent); }
+
+/* Main Stage */
+.stage-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  position: relative;
+  min-width: 0;
+}
+.stage {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* Zones */
+.zone {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.zone:hover { border-color: var(--accent); }
+.zone.focused { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
+.zone-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: linear-gradient(rgba(0,0,0,0.7), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+.zone-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+  background: rgba(0,0,0,0.5);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.zone-body { width: 100%; height: 100%; padding: 12px; display: flex; flex-direction: column; }
+
+/* Graph */
+.graph-container { flex: 1; position: relative; min-height: 0; }
+.graph-canvas { width: 100% !important; height: 100% !important; }
+.graph-state-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Media */
+.media-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.media-video { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+.media-article { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 12px; }
+.article-thumbnail { flex: 1; min-height: 0; border-radius: 8px; overflow: hidden; position: relative; }
+.article-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.article-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.article-content { padding: 8px 0; }
+.article-title { font-size: 0.9rem; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+.article-description { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; }
+.article-meta { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: var(--text-muted); }
+.article-publisher { color: var(--accent); font-weight: 600; }
+.article-link { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.75rem; margin-top: 8px; }
+
+/* Comments */
+.comments-container { flex: 1; overflow-y: auto; padding-right: 8px; }
+.comment { display: flex; gap: 12px; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
+.comment-avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; }
+.comment-body { flex: 1; min-width: 0; }
+.comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.comment-user { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+.comment-source { font-size: 0.65rem; color: var(--text-muted); }
+.comment-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+.comment-likes { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.reactions-toolbar { display: flex; gap: 8px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.reaction-filter-btn {
+  font-size: 0.6rem;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-weight: 600;
+}
+.reaction-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Source */
+.source-stats { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.source-stat { background: var(--bg-tertiary); padding: 8px 12px; border-radius: 6px; }
+.source-stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+.source-stat-value { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+.signals-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.signal-tag {
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+.signal-tag.active { background: var(--accent); color: #fff; }
+
+/* Controls */
+.graph-controls { display: flex; gap: 8px; margin-bottom: 8px; }
+.graph-state-btn {
+  font-size: 0.6rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.graph-state-btn:hover { background: var(--border); color: var(--text-primary); }
+.graph-state-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Notes toggle */
+.notes-toggle-btn {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 64px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 8px;
+  z-index: 11;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.notes-toggle-btn:hover { background: #2563eb; }
+
+/* Speaker Notes */
+.speaker-notes {
+  position: fixed;
+  left: 280px;
+  top: 0;
+  width: 320px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+body.speaker-notes-open .speaker-notes { transform: translateX(0); }
+body.speaker-notes-open .notes-toggle-btn { right: 316px; }
+.speaker-notes-header {
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.speaker-notes-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.speaker-notes-toggle { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
+.speaker-notes-body { flex: 1; overflow-y: auto; padding: 12px; }
+.note-item { padding: 10px; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; line-height: 1.5; }
+.note-item.active { border-left: 3px solid var(--accent); }
+.notes-editor { width: 100%; height: 200px; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 10px; font-family: inherit; font-size: 0.85rem; resize: none; }
+.notes-actions { display: flex; gap: 8px; margin-top: 10px; }
+.notes-btn { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-primary); cursor: pointer; font-size: 0.75rem; }
+.notes-btn.primary { background: var(--accent); border-color: var(--accent); }
+
+/* Recording */
+.rec-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--danger);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  z-index: 1000;
+}
+.rec-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* OBS */
+.obs-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.obs-modal.open { display: flex; }
+.obs-modal-content {
+  background: var(--bg-secondary);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: 300px;
+}
+.obs-modal h3 { margin-bottom: 16px; font-size: 1rem; }
+.obs-input { width: 100%; padding: 10px; margin-bottom: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 6px; }
+.obs-actions { display: flex; gap: 8px; }
+.obs-btn { flex: 1; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+.obs-btn.primary { background: var(--accent); color: #fff; }
+.obs-btn.secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="side-panel">
+    <div class="panel-header">
+      <span class="panel-title">Topics</span>
+      <span class="obs-status disconnected" id="obsStatus">OBS</span>
+    </div>
+    <div class="topic-list" id="topicList"></div>
+    <button class="notes-toggle-btn" onclick="toggleNotes()">NOTES</button>
+  </aside>
+
+  <div class="speaker-notes" id="speakerNotes">
+    <div class="speaker-notes-header">
+      <span class="speaker-notes-title">Speaker Notes</span>
+      <button class="speaker-notes-toggle" onclick="toggleEditNotes()">✏️</button>
+    </div>
+    <div class="speaker-notes-body" id="notesBody"></div>
+    <div class="notes-editor-container" id="notesEditorContainer" style="display:none;padding:12px;border-top:1px solid var(--border);">
+      <textarea class="notes-editor" id="notesEditor" placeholder="Write your notes here..."></textarea>
+      <div class="notes-actions">
+        <button class="notes-btn" onclick="toggleEditNotes()">Cancel</button>
+        <button class="notes-btn primary" onclick="saveNotes()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="stage-container">
+    <div class="stage">
+      <div class="zone" id="zoneGraph" onclick="setFocus('graph')">
+        <div class="zone-header">
+          <span class="zone-title">📊 Graph</span>
+        </div>
+        <div class="zone-body">
+          <div class="graph-controls" id="graphControls"></div>
+          <div class="graph-container">
+            <canvas id="chartCanvas" class="graph-canvas"></canvas>
+          </div>
+          <div class="graph-state-indicator" id="graphStateIndicator">Press Q to cycle</div>
+        </div>
+      </div>
+
+      <div class="zone" id="zoneMedia" onclick="setFocus('media')">
+        <div class="zone-header">
+          <span class="zone-title">🎬 Media</span>
+        </div>
+        <div class="zone-body">
+          <div class="media-container" id="mediaContainer"></div>
+        </div>
+      </div>
+
+      <div class="zone" id="zoneComments" onclick="setFocus('comments')">
+        <div class="zone-header">
+          <span class="zone-title">💬 Reactions</span>
+        </div>
+        <div class="zone-body" style="flex-direction: column;">
+          <div class="reactions-toolbar" id="reactionsToolbar">
+            <button class="reaction-filter-btn active" onclick="filterReactions('all', this)">All</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('twitter', this)">X/Twitter</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('reddit', this)">Reddit</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('instagram', this)">Instagram</button>
+          </div>
+          <div class="comments-container" id="commentsContainer"></div>
+        </div>
+      </div>
+
+      <div class="zone" id="zoneSource" onclick="setFocus('source')">
+        <div class="zone-header">
+          <span class="zone-title">📰 Source</span>
+        </div>
+        <div class="zone-body" id="sourceContainer"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="rec-indicator" id="recIndicator" style="display:none;">
+  <div class="rec-dot"></div>
+  <span>REC <span id="recTime">00:00</span></span>
+</div>
+
+<div class="obs-modal" id="obsModal">
+  <div class="obs-modal-content">
+    <h3>🎬 OBS Setup</h3>
+    <input type="text" class="obs-input" id="obsHost" placeholder="Host (default: localhost)">
+    <input type="text" class="obs-input" id="obsPort" placeholder="Port (default: 4455)">
+    <input type="password" class="obs-input" id="obsPassword" placeholder="Password (optional)">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <input type="checkbox" id="obsRemember">
+      <label style="font-size:0.8rem;color:var(--text-secondary);">Remember settings</label>
+    </div>
+    <div class="obs-actions">
+      <button class="obs-btn secondary" onclick="closeModal()">Cancel</button>
+      <button class="obs-btn primary" onclick="saveOBS()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// State
+let topics = [];
+let currentTopic = null;
+let chart = null;
+let graphState = 0;
+let expandedZone = null;
+let speakerNotesOpen = false;
+let obsConnected = false;
+let recording = false;
+let recStartTime = null;
+let recInterval = null;
+
+// Initialize
+function init() {
+  loadTopics();
+  setupGraphControls();
+  setupKeyboardShortcuts();
+  autoConnectOBS();
+}
+
+// Load topics from JSON
+function loadTopics() {
+  fetch('topics/index.json')
+    .then(r => r.json())
+    .then(data => {
+      const topicFiles = data.topics || data;
+      return Promise.all(topicFiles.map(f => fetch('topics/' + f).then(r => r.json())));
+    })
+    .then(topicsData => {
+      topics = topicsData;
+      if (topics.length > 0) selectTopic(topics[0]);
+      renderTopicList();
+    })
+    .catch(() => {
+      document.getElementById('topicList').innerHTML = '<div style="padding:20px;color:var(--text-muted);">No topics yet. Run the pipeline.</div>';
+    });
+}
+
+function renderTopicList() {
+  const list = document.getElementById('topicList');
+  list.innerHTML = topics.map((t, i) => `
+    <div class="topic-item ${currentTopic === t ? 'active' : ''}" onclick="selectTopic(topics[${i}])">
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-meta">
+        <span class="topic-category">${t.meta?.category}</span>
+        <span>— ${t.meta?.views || 'views'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectTopic(topic) {
+  currentTopic = topic;
+  renderTopicList();
+  renderMedia(topic);
+  renderComments(topic);
+  renderSource(topic);
+  renderNotes();
+  updateChart();
+}
+
+function setFocus(zone) {
+  document.querySelectorAll('.zone').forEach(z => z.classList.remove('focused'));
+  document.getElementById('zone' + zone.charAt(0).toUpperCase() + zone.slice(1)).classList.add('focused');
+}
+
+function toggleExpand(zone) {
+  const el = document.getElementById('zone' + zone.charAt(0).toUpperCase() + zone.slice(1));
+  if (expandedZone === zone) {
+    el.classList.remove('expanded');
+    expandedZone = null;
+  } else {
+    document.querySelectorAll('.zone').forEach(z => z.classList.remove('expanded'));
+    el.classList.add('expanded');
+    expandedZone = zone;
+  }
+}
+
+// Graph
+function setupGraphControls() {
+  const states = ['controversy', 'social buzz', 'sentiment'];
+  document.getElementById('graphControls').innerHTML = states.map((s, i) =>
+    `<button class="graph-state-btn ${i === 0 ? 'active' : ''}" onclick="setGraphState(${i})">${s}</button>`
+  ).join('');
+}
+
+function setGraphState(state) {
+  graphState = state;
+  document.querySelectorAll('.graph-state-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === state);
+  });
+  updateChart();
+}
+
+function cycleGraph() {
+  graphState = (graphState + 1) % 3;
+  setGraphState(graphState);
+}
+
+function updateChart() {
+  const ctx = document.getElementById('chartCanvas').getContext('2d');
+  const labels = ['0:00', '0:30', '1:00', '1:30', '2:00', '2:30', '3:00'];
+  const datasets = {
+    0: { label: 'Controversy Level', data: [20, 45, 60, 55, 75, 65, 80], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)' },
+    1: { label: 'Social Buzz', data: [10, 30, 50, 70, 85, 90, 95], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)' },
+    2: { label: 'Sentiment', data: [50, 45, 40, 55, 60, 50, 45], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)' }
+  };
+  const config = datasets[graphState];
+  
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ ...config, fill: true, tension: 0.4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#fff' } } }, scales: { x: { ticks: { color: '#888' }, grid: { color: '#333' } }, y: { ticks: { color: '#888' }, grid: { color: '#333' }, min: 0, max: 100 } } }
+  });
+  document.getElementById('graphStateIndicator').textContent = config.label + ' Over Time';
+}
+
+// Media
+function renderMedia(topic) {
+  const c = document.getElementById('mediaContainer');
+  const article = topic.media?.article;
+  if (article) {
+    c.innerHTML = `<div class="media-article">
+      <div class="article-thumbnail"><img src="${article.thumbnail}"><span class="article-badge">${article.publisher || 'Article'}</span></div>
+      <div class="article-content">
+        <div class="article-title">${article.title}</div>
+        <div class="article-description">${article.description || ''}</div>
+        <div class="article-meta"><span class="article-publisher">${article.publisher || 'Source'}</span></div>
+      </div>
+    </div>`;
+  } else {
+    c.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:40px;">No media available</div>';
+  }
+}
+
+// Comments
+function renderComments(topic) {
+  const c = document.getElementById('commentsContainer');
+  const comments = topic.reactions || [];
+  c.innerHTML = comments.map(r => `
+    <div class="comment">
+      <div class="comment-avatar" style="background:linear-gradient(135deg,var(--accent),#8b5cf6)"></div>
+      <div class="comment-body">
+        <div class="comment-header"><span class="comment-user">${r.author}</span><span class="comment-source">${r.platform}</span></div>
+        <div class="comment-text">${r.text}</div>
+        <div class="comment-likes">❤️ ${r.likes || 0}</div>
+      </div>
+    </div>
+  `).join('') || '<div style="color:var(--text-muted);padding:20px;">No reactions yet</div>';
+}
+
+function filterReactions(source, btn) {
+  document.querySelectorAll('.reaction-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const allReactions = currentTopic.reactions || [];
+  const filtered = source === 'all' ? allReactions : allReactions?.filter(r => r.platform?.toLowerCase() === source);
+  const c = document.getElementById('commentsContainer');
+  c.innerHTML = filtered?.map(r => `
+    <div class="comment">
+      <div class="comment-avatar" style="background:linear-gradient(135deg,var(--accent),#8b5cf6)"></div>
+      <div class="comment-body">
+        <div class="comment-header"><span class="comment-user">${r.author}</span><span class="comment-source">${r.platform}</span></div>
+        <div class="comment-text">${r.text}</div>
+        <div class="comment-likes">❤️ ${r.likes || 0}</div>
+      </div>
+    </div>
+  `).join('') || '';
+}
+
+// Source
+function renderSource(topic) {
+  const c = document.getElementById('sourceContainer');
+  const meta = topic.meta || {};
+  const source = topic.source || {};
+  const flags = meta.flags || [];
+  c.innerHTML = `
+    <div style="font-size:1rem;font-weight:600;margin-bottom:8px;">📰 ${topic.name}</div>
+    <div style="font-size:0.8rem;color:var(--text-muted);">${source.publisher || meta.source} ${source.verified ? '✓' : ''}</div>
+    <div class="source-stats">
+      <div class="source-stat"><div class="source-stat-label">Score</div><div class="source-stat-value">${meta.score || 58}</div></div>
+      <div class="source-stat"><div class="source-stat-label">Tier</div><div class="source-stat-value">${meta.tier || '1'}</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Signals</div>
+    <div class="signals-list">${flags.map(s => `<span class="signal-tag active">${s.replace('_', ' ')}</span>`).join('')}</div>
+  `;
+}
+
+// Notes
+function toggleNotes() {
+  speakerNotesOpen = !speakerNotesOpen;
+  document.body.classList.toggle('speaker-notes-open', speakerNotesOpen);
+}
+
+function renderNotes() {
+  const body = document.getElementById('notesBody');
+  const notes = currentTopic?.speakerNotes || [];
+  body.innerHTML = notes.map((n, i) => `<div class="note-item">${n}</div>`).join('') || '<div style="color:var(--text-muted);padding:20px;">No notes yet</div>';
+}
+
+function toggleEditNotes() {
+  const container = document.getElementById('notesEditorContainer');
+  container.style.display = container.style.display === 'none' ? 'block' : 'none';
+  if (container.style.display === 'block') {
+    document.getElementById('notesEditor').value = currentTopic?.speakerNotes?.join('\n\n') || '';
+  }
+}
+
+function saveNotes() {
+  const text = document.getElementById('notesEditor').value;
+  currentTopic.speakerNotes = text.split('\n\n').filter(n => n.trim());
+  renderNotes();
+  toggleEditNotes();
+}
+
+// Keyboard
+function setupKeyboardShortcuts() {
+  window.addEventListener('keydown', e => {
+    const key = e.key.toLowerCase();
+    if (key === 'q') cycleGraph();
+    if (key === '1') expandedZone ? toggleExpand('graph') : setFocus('graph');
+    if (key === '2') expandedZone ? toggleExpand('media') : setFocus('media');
+    if (key === '3') expandedZone ? toggleExpand('comments') : setFocus('comments');
+    if (key === '4') expandedZone ? toggleExpand('source') : setFocus('source');
+    if (key === 'n' || key === 'escape') toggleNotes();
+    if (key === '0' && expandedZone) toggleExpand(expandedZone);
+    if (key === 'escape' && expandedZone) toggleExpand(expandedZone);
+  });
+}
+
+// OBS
+function openOBSModal() { document.getElementById('obsModal').classList.add('open'); }
+function closeModal() { document.getElementById('obsModal').classList.remove('open'); }
+
+function saveOBS() {
+  const h = document.getElementById('obsHost').value || 'localhost';
+  const p = document.getElementById('obsPort').value || '4455';
+  const pw = document.getElementById('obsPassword').value;
+  const rem = document.getElementById('obsRemember').checked;
+  if (rem) {
+    localStorage.setItem('obsHost', h);
+    localStorage.setItem('obsPort', p);
+    localStorage.setItem('obsPassword', pw);
+    localStorage.setItem('obsRemember', 'true');
+  }
+  closeModal();
+  connectToOBS(h, p, pw);
+}
+
+function connectToOBS(host, port, password, auto = false) {
+  document.getElementById('obsStatus').textContent = 'Connecting...';
+  document.getElementById('obsStatus').className = 'obs-status';
+  setTimeout(() => {
+    obsConnected = true;
+    document.getElementById('obsStatus').textContent = 'OBS';
+    document.getElementById('obsStatus').classList.add('connected');
+  }, 1000);
+}
+
+function autoConnectOBS() {
+  if (localStorage.getItem('obsRemember') === 'true') {
+    const h = localStorage.getItem('obsHost') || 'localhost';
+    const p = localStorage.getItem('obsPort') || '4455';
+    const pw = localStorage.getItem('obsPassword') || '';
+    connectToOBS(h, p, pw, true);
+  }
+}
+
+// Recording
+function toggleRecording() {
+  recording = !recording;
+  const indicator = document.getElementById('recIndicator');
+  indicator.style.display = recording ? 'flex' : 'none';
+  if (recording) {
+    recStartTime = Date.now();
+    recInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recStartTime) / 1000);
+      document.getElementById('recTime').textContent = 
+        String(Math.floor(elapsed / 60)).padStart(2, '0') + ':' + String(elapsed % 60).padStart(2, '0');
+    }, 1000);
+  } else {
+    clearInterval(recInterval);
+  }
+}
+
+init();
+</script>
+<script src="animated-bg.js"></script>
+</body>
+</html>

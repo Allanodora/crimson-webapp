@@ -1,0 +1,109 @@
+{
+  "id": "new_iphone",
+  "name": "iPhone 17 Leaks",
+  "meta": {
+    "views": "4.3M",
+    "category": "Technology"
+  },
+  "graph": {
+    "states": ["buzz", "sentiment", "specs"],
+    "currentState": 0,
+    "data": {
+      "buzz": {
+        "label": "Social Media Buzz",
+        "type": "line",
+        "data": {
+          "labels": ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
+          "datasets": [{
+            "label": "Mentions (millions)",
+            "data": [1.2, 3.4, 5.8, 8.9, 12.3, 15.7],
+            "borderColor": "#6366f1",
+            "backgroundColor": "rgba(99, 102, 241, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }]
+        }
+      },
+      "sentiment": {
+        "label": "Public Sentiment",
+        "type": "doughnut",
+        "data": {
+          "labels": ["Excited", "Skeptical", "Indifferent", "Disappointed"],
+          "datasets": [{
+            "data": [52, 23, 15, 10],
+            "backgroundColor": ["#22c55e", "#f59e0b", "#6b7280", "#ef4444"]
+          }]
+        }
+      },
+      "specs": {
+        "label": "Leaked Spec Interest",
+        "type": "bar",
+        "data": {
+          "labels": ["A19 Chip", "Camera", "Display", "Battery", "AI Features"],
+          "datasets": [{
+            "label": "Search Interest %",
+            "data": [78, 92, 65, 45, 88],
+            "backgroundColor": "#6366f1"
+          }]
+        }
+      }
+    }
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "fallback_talk": null,
+    "article": {
+      "title": "iPhone 17 Pro Max: Everything We Know So Far",
+      "description": "New renders, leaked specs, and insider info on Apple's next flagship smartphone.",
+      "thumbnail": "https://picsum.photos/seed/iphone17/800/450",
+      "url": "https://news.google.com/search?q=iphone+17+pro+max+leak",
+      "publisher": "MacRumors",
+      "published_at": "4 hours ago"
+    }
+  },
+  "reactions": [
+    {
+      "author": "TechInsider_Daily",
+      "avatar": "https://i.pravatar.cc/150?u=ti1",
+      "text": "The camera upgrade is going to be insane. 48MP periscope lens is a game changer.",
+      "likes": 5678,
+      "platform": "twitter"
+    },
+    {
+      "author": "AppleTracker_Pro",
+      "avatar": "https://i.pravatar.cc/150?u=at2",
+      "text": "I've been following Apple leaks for 10 years. This is the most credible source we've had.",
+      "likes": 3456,
+      "platform": "reddit"
+    },
+    {
+      "author": "AndroidFan_Always",
+      "avatar": "https://i.pravatar.cc/150?u=af3",
+      "text": "Cool specs, but I'll wait for the Google Pixel 10 to drop first.",
+      "likes": 1234,
+      "platform": "twitter"
+    },
+    {
+      "author": "MobileIndustry",
+      "avatar": "https://i.pravatar.cc/150?u=mi4",
+      "text": "The AI features are what I'm most excited about. Finally, Apple catching up.",
+      "likes": 2341,
+      "platform": "linkedin"
+    }
+  ],
+  "source": {
+    "title": "Exclusive: iPhone 17 Pro Max Complete Spec Sheet Leaked",
+    "publisher": "MacRumors",
+    "url": "https://macrumors.com/iphone-17-pro-max",
+    "author": "Juli Clover",
+    "verified": true
+  },
+  "speakerNotes": [
+    "iPhone 17 leaks are heating up - this is huge news",
+    "Social buzz is massive - 4.3M views already",
+    "Camera specs are generating the most interest",
+    "People are split on whether to upgrade",
+    "Let's break down what this means for the market"
+  ]
+}

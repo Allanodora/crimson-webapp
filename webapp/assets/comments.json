@@ -1,0 +1,53 @@
+{
+  "comments": [
+    {
+      "author": "stats_ninja",
+      "text": "Numbers don't lie.",
+      "sentiment": "positive",
+      "likes": 2156
+    },
+    {
+      "author": "debate_king",
+      "text": "Hot take but not entirely wrong.",
+      "sentiment": "neutral",
+      "likes": 987
+    },
+    {
+      "author": "fanboy_mike",
+      "text": "Best analysis I've seen today!",
+      "sentiment": "positive",
+      "likes": 1834
+    },
+    {
+      "author": "critic_sam",
+      "text": "Overhyped as usual.",
+      "sentiment": "negative",
+      "likes": 445
+    },
+    {
+      "author": "pundit_daily",
+      "text": "Finally someone said it.",
+      "sentiment": "positive",
+      "likes": 3892
+    },
+    {
+      "author": "tactics_guru",
+      "text": "The data supports this completely.",
+      "sentiment": "positive",
+      "likes": 2847
+    },
+    {
+      "author": "football_fan_92",
+      "text": "This changes everything. Game changer.",
+      "sentiment": "positive",
+      "likes": 4521
+    },
+    {
+      "author": "neutral_viewer",
+      "text": "Interesting perspective, needs more context.",
+      "sentiment": "neutral",
+      "likes": 1203
+    }
+  ],
+  "total": 8
+}

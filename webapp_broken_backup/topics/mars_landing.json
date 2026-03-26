@@ -1,0 +1,109 @@
+{
+  "id": "mars_landing",
+  "name": "Mars Rover Discovery",
+  "meta": {
+    "views": "204.8K",
+    "category": "Science"
+  },
+  "graph": {
+    "states": ["signal", "data_quality", "discoveries"],
+    "currentState": 0,
+    "data": {
+      "signal": {
+        "label": "Signal Strength",
+        "type": "line",
+        "data": {
+          "labels": ["Entry", "Descent", "Landing", "+1hr", "+6hr", "+12hr"],
+          "datasets": [{
+            "label": "Signal (dB)",
+            "data": [-120, -95, -60, -45, -42, -40],
+            "borderColor": "#22d3ee",
+            "backgroundColor": "rgba(34, 211, 238, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }]
+        }
+      },
+      "data_quality": {
+        "label": "Data Transmission Rate",
+        "type": "bar",
+        "data": {
+          "labels": ["Direct", "MRO", "MAVEN", "Odyssey", "Relay"],
+          "datasets": [{
+            "label": "Mbps",
+            "data": [2.4, 4.8, 3.2, 2.1, 1.6],
+            "backgroundColor": "#22d3ee"
+          }]
+        }
+      },
+      "discoveries": {
+        "label": "Key Findings",
+        "type": "doughnut",
+        "data": {
+          "labels": ["Geological", "Atmospheric", "Organic Signs", "Water Ice"],
+          "datasets": [{
+            "data": [42, 28, 18, 12],
+            "backgroundColor": ["#78716c", "#60a5fa", "#a3e635", "#38bdf8"]
+          }]
+        }
+      }
+    }
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "fallback_talk": null,
+    "article": {
+      "title": "Mars Rover Finds Evidence of Ancient Water System",
+      "description": "NASA's latest rover has discovered mineral formations that could only form in the presence of flowing water.",
+      "thumbnail": "https://picsum.photos/seed/mars_rover/800/450",
+      "url": "https://news.google.com/search?q=mars+rover+water+discovery",
+      "publisher": "NASA JPL",
+      "published_at": "3 hours ago"
+    }
+  },
+  "reactions": [
+    {
+      "author": "NASAWatch",
+      "avatar": "https://i.pravatar.cc/150?u=nw1",
+      "text": "This is incredible! The mineral formations are unmistakable signs of ancient rivers.",
+      "likes": 3421,
+      "platform": "twitter"
+    },
+    {
+      "author": "SpaceXEnthusiast",
+      "avatar": "https://i.pravatar.cc/150?u=se2",
+      "text": "One step closer to colonization. Mars here we come!",
+      "likes": 2187,
+      "platform": "reddit"
+    },
+    {
+      "author": "Dr_AstroGeology",
+      "avatar": "https://i.pravatar.cc/150?u=da3",
+      "text": "The data quality from the relay network is exceptional. Great teamwork between agencies.",
+      "likes": 1567,
+      "platform": "twitter"
+    },
+    {
+      "author": "CosmicCuriosity",
+      "avatar": "https://i.pravatar.cc/150?u=cc4",
+      "text": "This changes our understanding of Mars' history completely.",
+      "likes": 987,
+      "platform": "mastodon"
+    }
+  ],
+  "source": {
+    "title": "Mars Rover Mission Update: Ancient Water System Confirmed",
+    "publisher": "NASA Jet Propulsion Laboratory",
+    "url": "https://mars.nasa.gov/news/mars-water-discovery",
+    "author": "Dr. Katherine Spiers",
+    "verified": true
+  },
+  "speakerNotes": [
+    "This discovery just came in from the Mars rover",
+    "The signal was strong throughout landing - flawless operation",
+    "We've been getting incredible data transmission rates",
+    "The geological findings are the most significant in years",
+    "What does this mean for Mars exploration?"
+  ]
+}

@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.ruff_cache/
+.DS_Store
+
+# Python envs
+venv/
+.venv/
+
+# Local outputs / caches
+output/
+pundit_pipeline/pipeline/output/
+pipeline.db
+*.sqlite
+*.sqlite3

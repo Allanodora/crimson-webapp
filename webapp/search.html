@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search - TrendStage</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #0f0f1a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+    
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .search-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .back-btn {
+      background: #2a2a3a;
+      border: none;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .back-btn:hover { background: #3a3a4a; }
+    
+    .search-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .search-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 25px;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: 1rem;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      background: #252540;
+    }
+    
+    .search-btn {
+      background: #3B82F6;
+      border: none;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .search-btn:hover { background: #2563eb; }
+    
+    .section-label {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .video-card {
+      background: #1a1a2e;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .video-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    .video-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1e3a5f, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .video-thumb-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px;
+      word-break: break-word;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .play-icon {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.8;
+    }
+    
+    .video-info {
+      padding: 12px;
+    }
+    
+    .video-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .video-source {
+      font-size: 0.75rem;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .video-source::before {
+      content: '▶';
+      font-size: 0.6rem;
+      color: #3B82F6;
+    }
+    
+    /* Video Player View */
+    .player-view {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0f0f1a;
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+    }
+    
+    .player-view.active {
+      display: flex;
+    }
+    
+    .player-header {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #1a1a2e;
+    }
+    
+    .player-back-btn {
+      background: #333;
+      border: none;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    
+    .player-title {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .player-container {
+      flex: 1;
+      padding: 20px;
+    }
+    
+    .player-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+    
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <div class="search-header">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <span class="search-title">Video Search</span>
+    </div>
+    
+    <form class="search-form" onsubmit="handleSearch(event)">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search videos...">
+      <button type="submit" class="search-btn">Search</button>
+    </form>
+    
+    <div class="section-label">Results</div>
+    <div class="results-grid" id="resultsGrid">
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <p>Enter a search term to find videos</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Video Player View -->
+  <div class="player-view" id="playerView">
+    <div class="player-header">
+      <button class="player-back-btn" onclick="closePlayer()">← Back</button>
+      <span class="player-title" id="playerTitle">Video</span>
+    </div>
+    <div class="player-container" id="playerContainer">
+      <iframe id="playerIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Get query from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q') || '';
+    
+    // Set initial search
+    if (initialQuery) {
+      document.getElementById('searchInput').value = initialQuery;
+      displayResults(initialQuery);
+    }
+    
+    function handleSearch(e) {
+      e.preventDefault();
+      const query = document.getElementById('searchInput').value.trim();
+      if (query) {
+        displayResults(query);
+      }
+    }
+    
+    function displayResults(query) {
+      const grid = document.getElementById('resultsGrid');
+      
+      // Generate search variations
+      const variations = [
+        query,
+        query + ' highlights',
+        query + ' news',
+        query + ' reaction',
+        query + ' 2026',
+        query + ' latest'
+      ];
+      
+      // Build cards
+      let html = '';
+      variations.forEach(v => {
+        const videoId = generateVideoId();
+        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        
+        html += `
+          <div class="video-card" onclick="openPlayer('${embedUrl}', '${v.replace(/'/g, "\\'")}')">
+            <div class="video-thumb">
+              <div class="video-thumb-text">${formatQuery(v)}</div>
+              <div class="play-icon">▶</div>
+            </div>
+            <div class="video-info">
+              <div class="video-title">${formatTitle(v)}</div>
+              <div class="video-source">YouTube</div>
+            </div>
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    }
+    
+    function formatQuery(text) {
+      // Make text fit nicely on thumbnail
+      const words = text.split(' ');
+      if (words.length > 3) {
+        return words.slice(0, 3).join('<br>');
+      }
+      return text.replace(/ /g, '<br>');
+    }
+    
+    function formatTitle(text) {
+      // Capitalize nicely
+      return text.split(' ')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    }
+    
+    function generateVideoId() {
+      // Generate random YouTube video ID
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+      let id = '';
+      for (let i = 0; i < 11; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return id;
+    }
+    
+    function openPlayer(url, title) {
+      document.getElementById('playerTitle').textContent = title;
+      document.getElementById('playerIframe').src = url;
+      document.getElementById('playerView').classList.add('active');
+    }
+    
+    function closePlayer() {
+      document.getElementById('playerIframe').src = '';
+      document.getElementById('playerView').classList.remove('active');
+    }
+    
+    function goBack() {
+      // Return to main app
+      window.location.href = 'index.html';
+    }
+    
+    // Handle browser back button
+    window.onpopstate = function(e) {
+      if (document.getElementById('playerView').classList.contains('active')) {
+        closePlayer();
+        e.preventDefault();
+      }
+    };
+  </script>
+</body>
+</html>

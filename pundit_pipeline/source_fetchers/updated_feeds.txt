@@ -1,0 +1,38 @@
+FEEDS = [
+    # football
+    {"url": "https://feeds.bbci.co.uk/sport/football/rss.xml", "source": "bbc_sport", "category": "football", "core_boost": true},
+
+    # football
+    {"url": "https://www.skysports.com/rss/12040", "source": "sky_sports", "category": "football", "core_boost": true},
+
+    # football
+    {"url": "https://www.espn.com/espn/rss/news", "source": "espn", "category": "football", "core_boost": true},
+
+    # football
+    {"url": "https://www.mirror.co.uk/sport/football/rss.xml", "source": "mirror", "category": "football", "core_boost": true},
+
+    # hiphop
+    {"url": "https://www.xxlmag.com/feed/", "source": "xxl", "category": "hiphop", "core_boost": false},
+
+    # ai_tech
+    {"url": "https://techcrunch.com/feed/", "source": "techcrunch", "category": "ai_tech", "core_boost": false},
+
+    # ai_tech
+    {"url": "https://www.theverge.com/rss/index.xml", "source": "the_verge", "category": "ai_tech", "core_boost": false},
+
+    # ai_tech
+    {"url": "https://feeds.feedburner.com/venturebeat/SZYF", "source": "venturebeat", "category": "ai_tech", "core_boost": false},
+
+    # ai_tech
+    {"url": "https://www.wired.com/feed/rss", "source": "wired", "category": "ai_tech", "core_boost": false},
+
+    # ai_tech
+    {"url": "https://feeds.arstechnica.com/arstechnica/technology-lab", "source": "ars Technica", "category": "ai_tech", "core_boost": false},
+
+    # trending
+    {"url": "https://feeds.bbci.co.uk/news/rss.xml", "source": "bbc_news", "category": "trending", "core_boost": false},
+
+    # trending
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml", "source": "nytimes", "category": "trending", "core_boost": false},
+
+]

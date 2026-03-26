@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Graph Test - ITV World Cup</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: #0f0f23; color: #fff; font-family: sans-serif; padding: 30px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .test-card { background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 20px 0; }
+    h2 { color: #3B82F6; margin-bottom: 5px; }
+    .story-title { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+    .talk-point { 
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6); 
+      padding: 14px 18px; 
+      border-radius: 8px; 
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-left: 4px solid #22C55E;
+    }
+    canvas { max-height: 280px; }
+    .data-table { width: 100%; margin-top: 15px; border-collapse: collapse; }
+    .data-table th, .data-table td { padding: 8px; text-align: left; border-bottom: 1px solid #333; }
+    .data-table th { color: #888; font-weight: normal; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📊 Graph Test: ITV World Cup Story</h2>
+    <p class="story-title">ITV forced into 2026 World Cup U-turn weeks after massive backlash over in-game ads</p>
+    
+    <div class="test-card">
+      <h3>REAL DATA: World Cup TV Viewership (millions)</h3>
+      <canvas id="testChart"></canvas>
+      <div class="talk-point" id="talkPoint">Talk about: "World Cup viewership has been declining - this is ITV's attempt to win viewers back"</div>
+      
+      <table class="data-table">
+        <tr><th>Year</th><th>Viewers (millions)</th></tr>
+        <tr><td>2014 Brazil</td><td>1.1bn (~750m avg)</td></tr>
+        <tr><td>2018 Russia</td><td>1.2bn (~800m avg)</td></tr>
+        <tr><td>2022 Qatar</td><td>1.5bn (~500m avg)</td></tr>
+      </table>
+    </div>
+
+    <div class="test-card">
+      <h3>ALT: Six Nations TV Viewership (UK millions)</h3>
+      <canvas id="testChart2"></canvas>
+      <div class="talk-point">Talk about: "Six Nations pulls in 10m+ viewers - that's why ITV doesn't want to risk it with ads"</div>
+    </div>
+  </div>
+
+  <script>
+    // REAL DATA: World Cup Final viewership trend
+    const ctx1 = document.getElementById('testChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['2014', '2018', '2022', '2026 (Projected)'],
+        datasets: [{
+          label: 'Final Viewers (millions)',
+          data: [750, 800, 500, 520],
+          borderColor: '#3B82F6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 8,
+          pointBackgroundColor: '#3B82F6'
+        }]
+      },
+      options: {
+        plugins: { 
+          legend: { labels: { color: '#fff' } },
+          title: { display: true, text: 'World Cup Final TV Viewership (millions)', color: '#fff' }
+        },
+        scales: {
+          x: { ticks: { color: '#fff' }, grid: { color: '#333' } },
+          y: { ticks: { color: '#fff' }, grid: { color: '#333' }, min: 0 }
+        }
+      }
+    });
+
+    // Six Nations comparison
+    const ctx2 = document.getElementById('testChart2').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['England', 'Ireland', 'France', 'Scotland', 'Wales', 'Italy'],
+        datasets: [{
+          label: 'Avg UK Viewers (millions)',
+          data: [4.2, 3.1, 2.8, 2.5, 2.3, 1.2],
+          backgroundColor: ['#EF4444', '#22C55E', '#3B82F6', '#F59E0B', '#8B5CF6', '#06B6D4'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        plugins: { 
+          legend: { labels: { color: '#fff' } },
+          title: { display: true, text: 'Six Nations 2025 - Avg UK TV Viewers', color: '#fff' }
+        },
+        scales: {
+          x: { ticks: { color: '#fff' }, grid: { color: '#333' } },
+          y: { ticks: { color: '#fff' }, grid: { color: '#333' }, min: 0 }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

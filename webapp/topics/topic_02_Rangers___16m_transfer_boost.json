@@ -1,0 +1,148 @@
+{
+  "name": "Rangers' £16m transfer boost, Old Firm away tickets latest & VAR ref summit",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "sky_sports",
+    "score": 58,
+    "tier": 2,
+    "tier_label": "📌 Story",
+    "flags": [
+      "has_stats",
+      "fresh",
+      "core_topic",
+      "has_villain",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "type": "transfer",
+    "chart": {
+      "label": "Transfer Fee: £16.0m",
+      "type": "bar",
+      "talk_point": "Compare Rangers deal to other transfers",
+      "data": {
+        "labels": [
+          "Rangers Deal",
+          "Old Firm Average",
+          "Top Clubs",
+          "Record Fee"
+        ],
+        "datasets": [
+          {
+            "label": "Fee (£m)",
+            "data": [
+              16.0,
+              11.2,
+              19.2,
+              24.0
+            ],
+            "backgroundColor": [
+              "#3B82F6",
+              "#8B5CF6",
+              "#F59E0B",
+              "#EF4444"
+            ],
+            "borderWidth": 0
+          }
+        ]
+      }
+    },
+    "talk_point": "Compare Rangers deal to other transfers"
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "Rangers' £16m transfer boost, Old Firm away tickets latest & VAR ref summit",
+      "description": "Rangers chairman Andrew Cavenagh has announced there will be a &#163;16m cash injection to support summer transfers and other work around the club.",
+      "thumbnail": "assets/topic_images/topic_fc44489e34ad4580.jpg",
+      "url": "https://www.skysports.com/football/news/12040/13524380/rangers-qa-on-16m-share-issue-transfer-plans-old-firm-fan-clash-future-celtic-park-ticket-allocations-var-referee-summit-and-more",
+      "publisher": "Sky Sports",
+      "published_at": "2026-03-25"
+    },
+    "quote_image": {
+      "text": "Rangers chairman Andrew Cavenagh has announced there will be a &#163;16m cash injection to support summer transfers and other work around the club.",
+      "image": "assets/topic_images/topic_924890a008b15ab7.jpg",
+      "summary": "Rangers chairman Andrew Cavenagh has announced there will be a &#163;16m cash injection to support summer transfers and other work around the club...."
+    },
+    "video_suggestions": [
+      "Rangers",
+      "Old Firm",
+      "£16M",
+      "transfer",
+      "boost",
+      "Firm",
+      "away",
+      "tickets"
+    ],
+    "browser": {
+      "summary": "Rangers chairman Andrew Cavenagh has announced there will be a &#163;16m cash injection to support summer transfers and other work around the club.",
+      "keywords": [
+        "Rangers",
+        "Old Firm",
+        "£16M",
+        "transfer",
+        "boost",
+        "Firm",
+        "away",
+        "tickets"
+      ],
+      "search_query": "Rangers Old Firm £16M transfer",
+      "videos": [],
+      "articles": [],
+      "video_suggestions": [
+        "Rangers",
+        "Old Firm",
+        "£16M",
+        "transfer",
+        "boost",
+        "Firm",
+        "away",
+        "tickets"
+      ],
+      "has_content": false
+    }
+  },
+  "reactions": [
+    {
+      "author": "FootballFanatic_UK",
+      "avatar": "https://i.pravatar.cc/150?u=ff1",
+      "text": "Absolute robbery! This is why football is broken right now.",
+      "likes": 2341,
+      "platform": "twitter"
+    },
+    {
+      "author": "PremierLeagueFan",
+      "avatar": "https://i.pravatar.cc/150?u=pl2",
+      "text": "I've seen this happen 3 times this season. Something needs to change.",
+      "likes": 1876,
+      "platform": "reddit"
+    },
+    {
+      "author": "CoachMike_Tactics",
+      "avatar": "https://i.pravatar.cc/150?u=cm3",
+      "text": "Tactically this makes no sense. The setup was all wrong from the start.",
+      "likes": 892,
+      "platform": "twitter"
+    },
+    {
+      "author": "SoccerStatsDaily",
+      "avatar": "https://i.pravatar.cc/150?u=sd4",
+      "text": "The numbers don't lie. This has been a pattern all season.",
+      "likes": 654,
+      "platform": "reddit"
+    }
+  ],
+  "source": {
+    "title": "Rangers' £16m transfer boost, Old Firm away tickets latest & VAR ref summit",
+    "publisher": "Sky Sports",
+    "url": "https://www.skysports.com/football/news/12040/13524380/rangers-qa-on-16m-share-issue-transfer-plans-old-firm-fan-clash-future-celtic-park-ticket-allocations-var-referee-summit-and-more",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Story: Rangers' £16m transfer boost, Old Firm away tickets latest & VAR ref summit"
+  ]
+}

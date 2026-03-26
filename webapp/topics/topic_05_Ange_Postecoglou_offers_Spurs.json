@@ -1,0 +1,171 @@
+{
+  "name": "Ange Postecoglou offers Spurs prediction amid relegation fears - ‘Not been easy’",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "mirror",
+    "score": 55,
+    "tier": 2,
+    "tier_label": "📌 Story",
+    "flags": [
+      "fresh",
+      "core_topic",
+      "story_potential",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "type": "tech",
+    "chart": {
+      "label": "Trending Now",
+      "type": "line",
+      "talk_point": "This story is gaining momentum",
+      "data": {
+        "labels": [
+          "1h ago",
+          "30m ago",
+          "15m ago",
+          "Now"
+        ],
+        "datasets": [
+          {
+            "label": "Interest",
+            "data": [
+              40,
+              65,
+              85,
+              100
+            ],
+            "borderColor": "#3B82F6",
+            "backgroundColor": "rgba(59, 130, 246, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }
+        ]
+      }
+    },
+    "talk_point": "This story is gaining momentum"
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "Ange Postecoglou offers Spurs prediction amid relegation fears - ‘Not been easy’",
+      "description": "Tottenham Hotspur are deep in the relegation mire after a disastrous Premier League campaign and former boss Ange Postecoglou has shared his verdict on them staying up",
+      "thumbnail": "assets/topic_images/topic_abeb50f7d6f68008.jpg",
+      "url": "https://www.mirror.co.uk/sport/football/news/ange-postecoglou-tottenham-hotspur-relegation-36923725",
+      "publisher": "Mirror",
+      "published_at": "2026-03-25"
+    },
+    "quote_image": {
+      "text": "Tottenham Hotspur are deep in the relegation mire after a disastrous Premier League campaign and former boss Ange Postecoglou has shared his verdict on them staying up.",
+      "image": "assets/topic_images/topic_b99c2bd58a2e8a6b.jpg",
+      "summary": "Tottenham Hotspur are deep in the relegation mire after a disastrous Premier League campaign and former boss Ange Postecoglou has shared his verdict o..."
+    },
+    "video_suggestions": [
+      "Spurs",
+      "Ange",
+      "Postecoglou",
+      "offers",
+      "prediction",
+      "relegation",
+      "fears",
+      "‘Not"
+    ],
+    "browser": {
+      "summary": "Tottenham Hotspur are deep in the relegation mire after a disastrous Premier League campaign and former boss Ange Postecoglou has shared his verdict o.",
+      "keywords": [
+        "Spurs",
+        "Ange",
+        "Postecoglou",
+        "offers",
+        "prediction",
+        "relegation",
+        "fears",
+        "‘Not"
+      ],
+      "search_query": "Spurs Ange Postecoglou offers",
+      "videos": [],
+      "articles": [],
+      "video_suggestions": [
+        "Spurs",
+        "Ange",
+        "Postecoglou",
+        "offers",
+        "prediction",
+        "relegation",
+        "fears",
+        "‘Not"
+      ],
+      "has_content": false
+    }
+  },
+  "reactions": [
+    {
+      "author": "u_hatlreexv",
+      "avatar": "https://i.pravatar.cc/150?u=hatlreex",
+      "text": "‘I paid my penance’: Postecoglou reveals details of ‘brutal’ sacking",
+      "likes": 505,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/coys/comments/1s31o29/i_paid_my_penance_postecoglou_reveals_details_of/",
+      "replies": 169,
+      "keyword_matches": 4,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_Sparky-moon",
+      "avatar": "https://i.pravatar.cc/150?u=Sparky-m",
+      "text": "Ange Postecoglou: I’ve got a plan to beat teams sucking life out of game",
+      "likes": 838,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/soccer/comments/1rz33yg/ange_postecoglou_ive_got_a_plan_to_beat_teams/",
+      "replies": 225,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_G45Live",
+      "avatar": "https://i.pravatar.cc/150?u=G45Live",
+      "text": "Jens Berthal Askou NY Times Interview (long read)",
+      "likes": 118,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/ScottishFootball/comments/1rv79ac/jens_berthal_askou_ny_times_interview_long_read/",
+      "replies": 83,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_SkySports",
+      "avatar": "https://i.pravatar.cc/150?u=SkySport",
+      "text": "Ange Postecoglou believes Spurs are in a 'hell of a fight' but have the 'quality to get out' and remain in the Premier League 👀💪",
+      "likes": 32,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/SkySports_Football/comments/1s3da41/ange_postecoglou_believes_spurs_are_in_a_hell_of/",
+      "replies": 40,
+      "keyword_matches": 3,
+      "subreddit": "r/premierleague"
+    },
+    {
+      "author": "u_SkySports",
+      "avatar": "https://i.pravatar.cc/150?u=SkySport",
+      "text": "Ange Postecoglou believes Spurs are in a 'hell of a fight' but have the 'quality to get out' and remain in the Premier League 👀💪",
+      "likes": 30,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/SkySports_Football/comments/1s3da41/ange_postecoglou_believes_spurs_are_in_a_hell_of/",
+      "replies": 40,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    }
+  ],
+  "source": {
+    "title": "Ange Postecoglou offers Spurs prediction amid relegation fears - ‘Not been easy’",
+    "publisher": "Mirror",
+    "url": "https://www.mirror.co.uk/sport/football/news/ange-postecoglou-tottenham-hotspur-relegation-36923725",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Story: Ange Postecoglou offers Spurs prediction amid relegation fears - ‘Not been easy’"
+  ]
+}

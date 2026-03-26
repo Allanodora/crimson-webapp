@@ -1,0 +1,94 @@
+{
+  "topics": [
+    {
+      "name": "Chelsea VAR",
+      "id": "chelsea_var",
+      "assets": {
+        "graph": [
+          "assets/chelsea_var/graph_0.png",
+          "assets/chelsea_var/graph_1.png",
+          "assets/chelsea_var/graph_2.png"
+        ],
+        "media": "assets/chelsea_var/media.png",
+        "stats": "assets/chelsea_var/stats.json",
+        "comments": "assets/chelsea_var/comments.json",
+        "source_url": "https://news.google.com/search?q=chelsea_var"
+      },
+      "meta": {
+        "views": "3.8M"
+      }
+    },
+    {
+      "name": "AI Breakthrough",
+      "id": "ai_breakthrough",
+      "assets": {
+        "graph": [
+          "assets/ai_breakthrough/graph_0.png",
+          "assets/ai_breakthrough/graph_1.png",
+          "assets/ai_breakthrough/graph_2.png"
+        ],
+        "media": "assets/ai_breakthrough/media.png",
+        "stats": "assets/ai_breakthrough/stats.json",
+        "comments": "assets/ai_breakthrough/comments.json",
+        "source_url": "https://news.google.com/search?q=ai_breakthrough"
+      },
+      "meta": {
+        "views": "577.2K"
+      }
+    },
+    {
+      "name": "Bitcoin Spike",
+      "id": "bitcoin_spike",
+      "assets": {
+        "graph": [
+          "assets/bitcoin_spike/graph_0.png",
+          "assets/bitcoin_spike/graph_1.png",
+          "assets/bitcoin_spike/graph_2.png"
+        ],
+        "media": "assets/bitcoin_spike/media.png",
+        "stats": "assets/bitcoin_spike/stats.json",
+        "comments": "assets/bitcoin_spike/comments.json",
+        "source_url": "https://news.google.com/search?q=bitcoin_spike"
+      },
+      "meta": {
+        "views": "332.2K"
+      }
+    },
+    {
+      "name": "Mars Landing",
+      "id": "mars_landing",
+      "assets": {
+        "graph": [
+          "assets/mars_landing/graph_0.png",
+          "assets/mars_landing/graph_1.png",
+          "assets/mars_landing/graph_2.png"
+        ],
+        "media": "assets/mars_landing/media.png",
+        "stats": "assets/mars_landing/stats.json",
+        "comments": "assets/mars_landing/comments.json",
+        "source_url": "https://news.google.com/search?q=mars_landing"
+      },
+      "meta": {
+        "views": "204.8K"
+      }
+    },
+    {
+      "name": "New iPhone",
+      "id": "new_iphone",
+      "assets": {
+        "graph": [
+          "assets/new_iphone/graph_0.png",
+          "assets/new_iphone/graph_1.png",
+          "assets/new_iphone/graph_2.png"
+        ],
+        "media": "assets/new_iphone/media.png",
+        "stats": "assets/new_iphone/stats.json",
+        "comments": "assets/new_iphone/comments.json",
+        "source_url": "https://news.google.com/search?q=new_iphone"
+      },
+      "meta": {
+        "views": "4.3M"
+      }
+    }
+  ]
+}

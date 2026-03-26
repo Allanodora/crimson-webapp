@@ -1,0 +1,118 @@
+{
+  "id": "ai_breakthrough",
+  "name": "AI Research Breakthrough",
+  "meta": {
+    "views": "577.2K",
+    "category": "Technology"
+  },
+  "graph": {
+    "states": ["performance", "citations", "adoption"],
+    "currentState": 0,
+    "data": {
+      "performance": {
+        "label": "Benchmark Performance",
+        "type": "line",
+        "data": {
+          "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+          "datasets": [
+            {
+              "label": "New Model",
+              "data": [72, 78, 85, 91, 94, 97],
+              "borderColor": "#3b82f6",
+              "backgroundColor": "rgba(59, 130, 246, 0.1)",
+              "fill": true,
+              "tension": 0.4
+            },
+            {
+              "label": "Previous SOTA",
+              "data": [68, 70, 71, 72, 73, 74],
+              "borderColor": "#9ca3af",
+              "borderDash": [5, 5],
+              "fill": false
+            }
+          ]
+        }
+      },
+      "citations": {
+        "label": "Paper Citations",
+        "type": "bar",
+        "data": {
+          "labels": ["Week 1", "Week 2", "Week 3", "Week 4"],
+          "datasets": [{
+            "label": "Citations",
+            "data": [156, 423, 891, 1247],
+            "backgroundColor": "#3b82f6"
+          }]
+        }
+      },
+      "adoption": {
+        "label": "Industry Adoption",
+        "type": "doughnut",
+        "data": {
+          "labels": ["Tech Giants", "Startups", "Academia", "Research Labs"],
+          "datasets": [{
+            "data": [35, 28, 22, 15],
+            "backgroundColor": ["#8b5cf6", "#06b6d4", "#f59e0b", "#10b981"]
+          }]
+        }
+      }
+    }
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "fallback_talk": null,
+    "article": {
+      "title": "Researchers Achieve Major AI Benchmark Milestone",
+      "description": "The new model surpasses human performance on complex reasoning tasks for the first time in history.",
+      "thumbnail": "https://picsum.photos/seed/ai_breakthrough/800/450",
+      "url": "https://news.google.com/search?q=ai+breakthrough+research",
+      "publisher": "MIT Technology Review",
+      "published_at": "5 hours ago"
+    }
+  },
+  "reactions": [
+    {
+      "author": "AI_Researcher_PhD",
+      "avatar": "https://i.pravatar.cc/150?u=ar1",
+      "text": "This is the breakthrough we've been waiting for. The architecture is elegant and scalable.",
+      "likes": 1823,
+      "platform": "twitter"
+    },
+    {
+      "author": "TechCrunchTips",
+      "avatar": "https://i.pravatar.cc/150?u=tc2",
+      "text": "Major implications for healthcare and scientific research. This changes everything.",
+      "likes": 1456,
+      "platform": "reddit"
+    },
+    {
+      "author": "SkepticDev",
+      "avatar": "https://i.pravatar.cc/150?u=sd3",
+      "text": "Let's see if this reproduces. We've seen many 'breakthroughs' that didn't hold up.",
+      "likes": 987,
+      "platform": "twitter"
+    },
+    {
+      "author": "FutureOfWork",
+      "avatar": "https://i.pravatar.cc/150?u=fw4",
+      "text": "The benchmark improvements are real, but let's talk about practical applications.",
+      "likes": 654,
+      "platform": "linkedin"
+    }
+  ],
+  "source": {
+    "title": "New AI Model Achieves Human-Level Performance on Reasoning Tasks",
+    "publisher": "MIT Technology Review",
+    "url": "https://technologyreview.com/ai-breakthrough",
+    "author": "Will Douglas Heaven",
+    "verified": true
+  },
+  "speakerNotes": [
+    "This research just dropped and it's making waves",
+    "Notice how quickly citations are growing - exponential growth",
+    "The performance gap between old and new is significant",
+    "Industry adoption is picking up steam",
+    "What are the implications for your work?"
+  ]
+}

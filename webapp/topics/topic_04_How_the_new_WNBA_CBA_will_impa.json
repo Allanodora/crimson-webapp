@@ -1,0 +1,165 @@
+{
+  "name": "How the new WNBA CBA will impact every player's salary in 2026",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "espn",
+    "score": 55,
+    "tier": 2,
+    "tier_label": "📌 Story",
+    "flags": [
+      "has_stats",
+      "fresh",
+      "core_topic",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "type": "tech",
+    "chart": {
+      "label": "Trending Now",
+      "type": "line",
+      "talk_point": "This story is gaining momentum",
+      "data": {
+        "labels": [
+          "1h ago",
+          "30m ago",
+          "15m ago",
+          "Now"
+        ],
+        "datasets": [
+          {
+            "label": "Interest",
+            "data": [
+              40,
+              65,
+              85,
+              100
+            ],
+            "borderColor": "#3B82F6",
+            "backgroundColor": "rgba(59, 130, 246, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }
+        ]
+      }
+    },
+    "talk_point": "This story is gaining momentum"
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "How the new WNBA CBA will impact every player's salary in 2026",
+      "description": "A'ja Wilson will likely get the $1.4 million supermax, while Caitlin Clark's rookie contract will pay over $500,000.",
+      "thumbnail": "assets/topic_images/topic_479ac08b5e394073.jpg",
+      "url": "https://www.espn.com/wnba/story/_/id/48271630/wnba-cba-collective-bargaining-agreement-salary-supermax-rookie-wages-contracts",
+      "publisher": "Espn",
+      "published_at": "2026-03-25"
+    },
+    "quote_image": {
+      "text": "A'ja Wilson will likely get the $1.4 million supermax, while Caitlin Clark's rookie contract will pay over $500,000.",
+      "image": "assets/topic_images/topic_7cf82ed4a2190151.jpg",
+      "summary": "A'ja Wilson will likely get the $1.4 million supermax, while Caitlin Clark's rookie contract will pay over $500,000...."
+    },
+    "video_suggestions": [
+      "WNBA",
+      "impact",
+      "every",
+      "player's",
+      "salary",
+      "2026"
+    ],
+    "browser": {
+      "summary": "A'ja Wilson will likely get the $1.4 million supermax, while Caitlin Clark's rookie contract will pay over $500,000.",
+      "keywords": [
+        "WNBA",
+        "impact",
+        "every",
+        "player's",
+        "salary",
+        "2026"
+      ],
+      "search_query": "WNBA impact every player's",
+      "videos": [],
+      "articles": [],
+      "video_suggestions": [
+        "WNBA",
+        "impact",
+        "every",
+        "player's",
+        "salary",
+        "2026"
+      ],
+      "has_content": false
+    }
+  },
+  "reactions": [
+    {
+      "author": "u_AutoNewspaperAdmin",
+      "avatar": "https://i.pravatar.cc/150?u=AutoNews",
+      "text": "[Sports] - How the new WNBA CBA will impact every player's salary in 2026 | ESPN",
+      "likes": 1,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/AutoNewspaper/comments/1s38gsl/sports_how_the_new_wnba_cba_will_impact_every/",
+      "replies": 0,
+      "keyword_matches": 6,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_AutoNewsAdmin",
+      "avatar": "https://i.pravatar.cc/150?u=AutoNews",
+      "text": "[Sports] - How the new WNBA CBA will impact every player's salary in 2026",
+      "likes": 1,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/ESPNauto/comments/1s38gec/sports_how_the_new_wnba_cba_will_impact_every/",
+      "replies": 0,
+      "keyword_matches": 6,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_AutoNewspaperAdmin",
+      "avatar": "https://i.pravatar.cc/150?u=AutoNews",
+      "text": "[Sports] - How the new WNBA CBA will impact every player's salary in 2026 | ESPN",
+      "likes": 1,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/AutoNewspaper/comments/1s38gsl/sports_how_the_new_wnba_cba_will_impact_every/",
+      "replies": 0,
+      "keyword_matches": 6,
+      "subreddit": "r/premierleague"
+    },
+    {
+      "author": "u_AutoNewspaperAdmin",
+      "avatar": "https://i.pravatar.cc/150?u=AutoNews",
+      "text": "[Sports] - How the new WNBA CBA will impact every player's salary in 2026 | ESPN",
+      "likes": 1,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/AutoNewspaper/comments/1s38gsl/sports_how_the_new_wnba_cba_will_impact_every/",
+      "replies": 0,
+      "keyword_matches": 6,
+      "subreddit": "r/chelseafc"
+    },
+    {
+      "author": "u_TiredPanini",
+      "avatar": "https://i.pravatar.cc/150?u=TiredPan",
+      "text": "2026 Countdown to Kickoff  – Angel City FC",
+      "likes": 42,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/NWSL/comments/1rj03yj/2026_countdown_to_kickoff_angel_city_fc/",
+      "replies": 61,
+      "keyword_matches": 5,
+      "subreddit": "r/soccer"
+    }
+  ],
+  "source": {
+    "title": "How the new WNBA CBA will impact every player's salary in 2026",
+    "publisher": "Espn",
+    "url": "https://www.espn.com/wnba/story/_/id/48271630/wnba-cba-collective-bargaining-agreement-salary-supermax-rookie-wages-contracts",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Story: How the new WNBA CBA will impact every player's salary in 2026"
+  ]
+}

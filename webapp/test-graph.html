@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Graph Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: #1a1a2e; color: #fff; font-family: sans-serif; padding: 20px; }
+    .test-card { background: #16213e; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 500px; }
+    .talk-point { 
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6); 
+      padding: 12px 16px; 
+      border-radius: 8px; 
+      margin-top: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-left: 4px solid #22C55E;
+    }
+    canvas { max-height: 300px; }
+    .btn { background: #3B82F6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px; }
+    .btn:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>Graph Test - Transfer Story</h1>
+  
+  <div class="test-card">
+    <h3>Topic: Rangers £16m Transfer</h3>
+    <canvas id="testChart"></canvas>
+    <div class="talk-point" id="talkPoint">This deal is £16.0m - compare to the average</div>
+  </div>
+
+  <h1>Graph Test - Controversy Story</h1>
+  
+  <div class="test-card">
+    <h3>Topic: ITV U-turn</h3>
+    <canvas id="testChart2"></canvas>
+    <div class="talk-point" id="talkPoint2">Everyone's divided on this one</div>
+  </div>
+
+  <script>
+    // Test 1: Bar chart (transfer)
+    const ctx1 = document.getElementById('testChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['This Deal', 'League Average', 'Top 5 Average', 'Record'],
+        datasets: [{
+          label: 'Fee (£m)',
+          data: [16.0, 11.2, 19.2, 24.0],
+          backgroundColor: ['#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#fff' } } },
+        scales: {
+          x: { ticks: { color: '#fff' }, grid: { color: '#333' } },
+          y: { ticks: { color: '#fff' }, grid: { color: '#333' } }
+        }
+      }
+    });
+
+    // Test 2: Doughnut chart (controversy)
+    const ctx2 = document.getElementById('testChart2').getContext('2d');
+    new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Against', 'For', 'Undecided'],
+        datasets: [{
+          label: 'Opinion',
+          data: [45, 30, 25],
+          backgroundColor: ['#EF4444', '#22C55E', '#F59E0B'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#fff' } } }
+      }
+    });
+  </script>
+</body>
+</html>

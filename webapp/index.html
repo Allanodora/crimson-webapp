@@ -1,0 +1,3163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crimson's Web App</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #161616;
+  --bg-tertiary: #1a1a1a;
+  --border: #2a2a2a;
+  --text-primary: #fff;
+  --text-secondary: #888;
+  --text-muted: #555;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.3);
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+  overflow: hidden;
+  display: flex;
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+}
+
+/* Side Panel */
+.side-panel {
+  width: 280px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+/* Notes toggle button inside side panel */
+.notes-toggle-btn {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 64px;
+  background: var(--accent);
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 8px;
+  z-index: 11;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+}
+
+body.speaker-notes-open .notes-toggle-btn { 
+  right: 316px;
+}
+.notes-toggle-btn:hover { background: #2563eb; }
+body.recording .notes-toggle-btn { display: none; }
+
+.panel-header {
+  padding: 16px 20px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.panel-brand {
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+.obs-status {
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.obs-status.connected { background: var(--success); color: #000; }
+.obs-status.disconnected { background: var(--text-muted); color: #fff; }
+
+.topic-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+.topic-item {
+  padding: 14px 20px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.topic-item:hover { background: var(--bg-tertiary); }
+.topic-item.active {
+  background: var(--bg-tertiary);
+  border-left-color: var(--accent);
+}
+
+.topic-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.topic-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 8px; }
+.topic-category { color: var(--accent); }
+
+/* Main Stage */
+.stage-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  position: relative;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+body.speaker-notes-open .stage-container {
+  margin-left: 0;
+}
+
+.stage {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+  transition: all 0.3s ease;
+}
+
+/* Zones */
+.zone {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.6;
+}
+
+.zone:hover { opacity: 0.8; }
+.zone.focused {
+  opacity: 1;
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.zone.expanded {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 85vw !important;
+  height: 80vh !important;
+  transform: translate(-50%, -50%) !important;
+  opacity: 1;
+  border-color: var(--accent);
+  box-shadow: 0 0 60px var(--accent-glow);
+  z-index: 100;
+}
+
+.zone-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.zone-title, .zone-expand-btn {
+  pointer-events: auto;
+}
+
+.zone-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+  background: rgba(0,0,0,0.5);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.zone-expand-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(59, 130, 246, 0.8);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.zone:hover .zone-expand-btn { opacity: 1; }
+.zone-expand-btn:hover { transform: scale(1.1); background: var(--accent); }
+
+.zone-body {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Graph Zone */
+.graph-container {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.graph-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.graph-state-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+
+
+/* Media Zone */
+.media-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.media-article {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.article-thumbnail {
+  flex: 1;
+  min-height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.article-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.media-topic-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quote-with-label {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.quote-topic-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.article-content {
+  padding: 8px 0;
+}
+
+.article-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.article-description {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.article-publisher { color: var(--accent); font-weight: 600; }
+
+.article-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-top: 8px;
+}
+
+.article-link:hover { text-decoration: underline; }
+
+/* Media Carousel */
+.media-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.media-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 60px;
+}
+
+body.has-expanded .media-slide {
+  padding-bottom: 70px;
+}
+
+body.has-expanded .media-slide#slide1.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+body.has-expanded .media-slide#slide1.active .quote-image {
+  width: 100%;
+  max-height: 50%;
+  object-fit: contain;
+  flex: none;
+}
+
+body.has-expanded .quote-text {
+  font-size: 1.4rem;
+  margin-top: 16px;
+}
+
+body.has-expanded .quote-summary {
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
+
+.media-slide.active {
+  display: flex;
+}
+
+.media-slide-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.slide-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.slide-dot.active {
+  background: #3B82F6;
+}
+
+.media-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 50px;
+  background: rgba(0,0,0,0.5);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-arrow:hover { background: rgba(0,0,0,0.7); }
+
+.media-arrow-left { left: 0; border-radius: 0 4px 4px 0; }
+.media-arrow-right { right: 0; border-radius: 4px 0 0 4px; }
+
+.media-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Quote Slide */
+.quote-slide {
+  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  color: #fff;
+  padding: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  overflow: visible;
+}
+
+.quote-slide .quote-image {
+  width: 100%;
+  max-height: 55%;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+}
+
+.quote-image-caption {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: -4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quote-text {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: #f0f0f0;
+  max-width: 92%;
+  padding: 0 8px;
+}
+
+.quote-text::before { 
+  content: '"'; 
+  font-size: 1.6rem;
+  color: #ff6b6b;
+}
+.quote-text::after { 
+  content: '"'; 
+  font-size: 1.6rem;
+  color: #ff6b6b;
+}
+
+.quote-summary {
+  font-size: 0.75rem;
+  color: #777;
+  line-height: 1.3;
+  max-width: 92%;
+  padding: 0 8px;
+}
+
+/* Video Slide */
+.video-slide {
+  background: #0f0f0f;
+  padding: 15px;
+}
+
+.video-suggestions {
+  margin-bottom: 10px;
+}
+
+.video-suggestion-label {
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.video-suggestion-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.video-suggestion-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.video-suggestion-btn:hover { background: #3B82F6; }
+
+.video-results {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.video-result-item {
+  background: #1a1a1a;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-result-item:hover { outline: 2px solid #3B82F6; }
+
+.video-result-thumb {
+  width: 100%;
+  aspect-ratio: 9/16;
+  object-fit: cover;
+}
+
+.video-result-title {
+  font-size: 0.65rem;
+  padding: 6px;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.video-player-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.video-player-iframe {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+}
+
+.video-player-controls {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.video-control-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.video-control-btn:hover { background: #444; }
+
+/* Mini Browser Styles */
+.browser-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.browser-search {
+  display: flex;
+  gap: 6px;
+}
+
+.browser-search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.browser-search-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+}
+
+.browser-search-btn {
+  padding: 8px 16px;
+  background: #3B82F6;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.browser-search-btn:hover { background: #2563eb; }
+
+.browser-summary {
+  background: linear-gradient(135deg, #1e3a5f, #0f172a);
+  border-radius: 8px;
+  padding: 12px;
+  border-left: 3px solid #3B82F6;
+}
+
+.browser-summary-label {
+  font-size: 0.65rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.browser-summary-text {
+  font-size: 0.8rem;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.browser-section {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.browser-section-label {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.browser-videos {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.browser-video-item {
+  flex: 0 0 70px;
+  cursor: pointer;
+}
+
+.browser-video-thumb {
+  width: 70px;
+  height: 100px;
+  background: #333;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.browser-video-thumb:hover { background: #3B82F6; }
+
+.browser-video-title {
+  font-size: 0.6rem;
+  color: #aaa;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+}
+
+.browser-articles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.browser-article-item {
+  padding: 8px;
+  background: #252525;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.browser-article-item:hover { background: #2a2a2a; }
+
+.browser-article-title {
+  font-size: 0.75rem;
+  color: #fff;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.browser-article-source {
+  font-size: 0.65rem;
+  color: #888;
+}
+
+.browser-empty {
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+.browser-loading {
+  font-size: 0.8rem;
+  color: #888;
+  text-align: center;
+  padding: 40px;
+}
+
+.browser-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  text-align: center;
+  padding: 20px;
+}
+
+.browser-suggestions {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.browser-suggestion-label {
+  font-size: 0.65rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.browser-suggestion-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.browser-suggestion-btn {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: #aaa;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.browser-suggestion-btn:hover { background: #3B82F6; color: #fff; }
+
+/* Article Preview */
+.article-preview {
+  padding: 15px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.preview-back-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.preview-title {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.preview-source {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.preview-url {
+  font-size: 0.7rem;
+  color: #666;
+  word-break: break-all;
+}
+
+/* Inline Video Player */
+.video-inline-player {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.video-inline-player iframe {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+}
+
+.video-back-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+
+/* Expand Controls */
+.media-expand-controls {
+  padding: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+  display: none;
+}
+
+body.has-expanded .media-expand-controls {
+  display: flex;
+  justify-content: center;
+}
+
+body.has-expanded .media-controls-row {
+  background: rgba(0,0,0,0.8);
+  padding: 8px 15px;
+  border-radius: 25px;
+}
+
+.media-controls-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.media-control-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-control-btn:hover { background: #3B82F6; }
+
+/* Media Content Transform for Pan/Zoom */
+.media-content-zoom {
+  transition: transform 0.2s ease;
+}
+
+/* Comments Zone */
+.comments-container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.comment {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+.comment-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comment-body { flex: 1; min-width: 0; }
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-author { font-size: 0.8rem; font-weight: 600; color: var(--accent); }
+.comment-platform {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.comment-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+.comment-text.full { white-space: pre-wrap; word-break: break-word; }
+.comment-likes {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-sub { font-size: 0.6rem; color: #ff4500; }
+
+.comment.pinned { border-left-color: #22C55E; background: rgba(34, 197, 94, 0.1); }
+.comment.expanded { background: var(--bg-secondary); }
+
+.pinned-badge { 
+  font-size: 0.65rem; 
+  color: #22C55E; 
+  font-weight: 600; 
+  margin-bottom: 4px; 
+}
+
+.comment-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.reaction-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.reaction-btn:hover { background: var(--accent); color: #fff; }
+.reaction-btn.active { background: #22C55E; color: #fff; border-color: #22C55E; }
+
+/* Source Zone */
+.source-container {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.source-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+}
+
+.source-card:hover { background: var(--border); }
+
+.source-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.source-info { flex: 1; min-width: 0; }
+.source-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.source-meta { font-size: 0.7rem; color: var(--text-muted); }
+.source-verified { color: var(--accent); margin-left: 4px; }
+
+/* Speaker Notes - Slides from behind side panel */
+.speaker-notes {
+  width: 0;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+body.speaker-notes-open .speaker-notes {
+  width: 320px;
+  padding: 20px;
+}
+
+body.recording .speaker-notes {
+  width: 0 !important;
+  padding: 0 !important;
+}
+
+.speaker-notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.speaker-notes-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.speaker-notes-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+
+.speaker-notes-toggle:hover { color: var(--text-primary); }
+
+.notes-list { flex: 1; overflow-y: auto; }
+
+.note-item {
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.note-item:hover { background: var(--border); }
+.note-item.active { border-left-color: var(--accent); background: var(--border); color: var(--text-primary); }
+
+/* Camera Corner */
+.camera-corner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 200px;
+  height: 150px;
+  background: #111;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  z-index: 200;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: grab;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.camera-corner:active { cursor: grabbing; }
+.camera-corner.recording { border-color: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+body.has-expanded .camera-corner {
+  transform: scale(0.75);
+  bottom: 12px;
+  right: 12px;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.camera-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.camera-placeholder:hover { background: var(--bg-tertiary); }
+
+.camera-ui {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.camera-rec {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--danger);
+  border-radius: 50%;
+}
+
+.rec-dot.live { animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.rec-label { font-size: 0.65rem; font-weight: 700; color: var(--text-primary); }
+.rec-time { font-size: 0.65rem; color: var(--text-secondary); font-family: monospace; }
+
+.camera-controls { display: flex; gap: 6px; }
+
+.camera-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 0.7rem;
+  transition: all 0.2s;
+}
+
+.camera-btn:hover { background: rgba(255,255,255,0.2); }
+.camera-btn.active { background: var(--accent); border-color: var(--accent); }
+
+.record-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.record-btn .btn-icon {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.record-btn.recording .btn-icon { border-radius: 50%; }
+
+/* Recording Overlay */
+.recording-overlay {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--danger);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+body.recording .recording-overlay { opacity: 1; }
+
+.recording-overlay .rec-dot {
+  width: 10px;
+  height: 10px;
+  animation: pulse 1s infinite;
+}
+
+/* Keyboard Hints */
+.keyboard-hints {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  background: rgba(0,0,0,0.8);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  z-index: 150;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+body.recording .keyboard-hints { opacity: 1; }
+
+.hint-key {
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 4px;
+}
+
+/* OBS Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay.show { display: flex; }
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 320px;
+}
+
+.modal h3 { margin-bottom: 20px; font-size: 1rem; }
+
+.modal-field {
+  margin-bottom: 16px;
+}
+
+.modal-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal-field input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.modal-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.modal-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.modal-btns button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.modal-btns .save { background: var(--accent); color: #fff; }
+.modal-btns .cancel { background: var(--bg-tertiary); color: var(--text-primary); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Entrance Animations ── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.zone {
+  animation: fadeSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+#zoneGraph    { animation-delay: 0.05s; }
+#zoneMedia    { animation-delay: 0.15s; }
+#zoneComments { animation-delay: 0.25s; }
+#zoneSource   { animation-delay: 0.35s; }
+
+.topic-item {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* Reload animation trigger */
+.zone.reloading {
+  animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+/* ── Tier badge ── */
+.tier-badge {
+  display: inline-block;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.tier-1 { background: var(--accent); color: #fff; }
+.tier-2 { background: var(--text-muted); color: #fff; }
+.tier-3 { background: #f59e0b; color: #000; }
+
+/* ── Graph zone controls ── */
+.graph-controls {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.graph-state-btn {
+  font-size: 0.6rem;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Expand controls (Jupyter style) */
+.graph-expand-controls {
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+.graph-controls-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.graph-control-btn {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.graph-control-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.graph-control-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+#graphTypeSelect {
+  font-size: 0.7rem;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.graph-metrics {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+.graph-metrics-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+.graph-metrics-label { color: #666; }
+.graph-metrics-value { color: #3B82F6; font-weight: 600; }
+.data-table {
+  margin-top: 8px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+.data-table-content {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table-content th, .data-table-content td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.data-table-content th { color: #666; font-weight: 600; }
+.data-table-content td { color: #333; }
+.data-table-content tr:last-child td { border-bottom: none; }
+.graph-state-btn:hover { background: var(--border); color: var(--text-primary); }
+.graph-state-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ── Reactions engagement ── */
+.reactions-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.reaction-filter-btn {
+  font-size: 0.6rem;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.reaction-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.reaction-filter-btn:hover { color: var(--text-primary); }
+
+/* Comment highlight on hover */
+.comment {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.comment:hover {
+  border-left-color: var(--accent);
+  background: var(--bg-secondary);
+  transform: translateX(2px);
+}
+.comment.highlighted {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+/* ── Source zone upgrade ── */
+.source-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.source-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-tertiary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  min-width: 60px;
+}
+.source-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: monospace;
+}
+.source-stat-label {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* ── Notes score indicator ── */
+.notes-score {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+.notes-score-val { color: var(--accent); font-weight: 700; font-family: monospace; }
+
+/* ── Loading state ── */
+.zone-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  gap: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Side Panel -->
+  <aside class="side-panel">
+    <div class="panel-header">
+      <div class="panel-header-left">
+        <div class="panel-brand">Crimson's Web App</div>
+        <span class="panel-title">Topics</span>
+      </div>
+      <span class="obs-status disconnected" id="obsStatus">OBS</span>
+    </div>
+    <div class="topic-list" id="topicList"></div>
+    <!-- Notes Toggle Button -->
+    <button class="notes-toggle-btn" onclick="toggleNotes()" id="notesToggleBtn" title="Open Speaker Notes">NOTES</button>
+  </aside>
+
+  <!-- Speaker Notes Panel -->
+  <div class="speaker-notes" id="speakerNotes">
+    <div class="speaker-notes-header">
+      <span class="speaker-notes-title">Speaker Notes</span>
+      <button class="speaker-notes-toggle" onclick="toggleNotes()">×</button>
+    </div>
+    <div class="notes-list" id="notesList"></div>
+  </div>
+
+  <!-- Main Stage -->
+  <main class="stage-container">
+    <div class="stage">
+      <!-- Graph Zone -->
+      <div class="zone" id="zoneGraph" onclick="setFocus('graph')">
+        <div class="zone-header">
+          <span class="zone-title">📊 Graph</span>
+          <button class="zone-expand-btn" onclick="event.stopPropagation();toggleExpand('graph')">⧉</button>
+        </div>
+        <div class="zone-body">
+          <div class="graph-controls" id="graphControls"></div>
+          <!-- Expand Controls (hidden by default) -->
+          <div class="graph-expand-controls" id="graphExpandControls" style="display: none;">
+            <div class="graph-controls-row">
+              <select id="graphTypeSelect" onchange="setChartType(this.value)">
+                <option value="recommended">📊 Recommended</option>
+                <option value="timeline">📈 Timeline</option>
+                <option value="breakdown">📊 Breakdown</option>
+                <option value="comparison">⚖️ Comparison</option>
+                <option value="sentiment">💭 Sentiment</option>
+              </select>
+              <button class="graph-control-btn" id="legendToggle" onclick="toggleLegend()">Legend</button>
+              <button class="graph-control-btn" id="dataTableToggle" onclick="toggleDataTable()">📊 Data</button>
+              <button class="graph-control-btn" id="exportBtn" onclick="exportChart()">📥 Export</button>
+            </div>
+            <div class="graph-metrics" id="graphMetrics"></div>
+          </div>
+          <div class="graph-container">
+            <canvas id="chartCanvas" class="graph-canvas"></canvas>
+          </div>
+          <div class="data-table" id="dataTable" style="display: none;"></div>
+          <div class="graph-state-indicator" id="graphStateIndicator">Press Q to cycle</div>
+        </div>
+      </div>
+
+      <!-- Media Zone -->
+      <div class="zone" id="zoneMedia" onclick="setFocus('media')">
+        <div class="zone-header">
+          <span class="zone-title">🎬 Media</span>
+          <button class="zone-expand-btn" onclick="event.stopPropagation();toggleExpand('media')">⧉</button>
+        </div>
+        <div class="zone-body">
+          <!-- Media Carousel -->
+          <div class="media-carousel" id="mediaCarousel">
+            <!-- Slide Indicators -->
+            <div class="media-slide-indicators" id="slideIndicators">
+              <span class="slide-dot active" data-slide="0"></span>
+              <span class="slide-dot" data-slide="1"></span>
+              <span class="slide-dot" data-slide="2"></span>
+            </div>
+            
+            <!-- Slide Arrow (default view) -->
+            <button class="media-arrow media-arrow-left" onclick="event.stopPropagation();prevMediaSlide()">‹</button>
+            <button class="media-arrow media-arrow-right" onclick="event.stopPropagation();nextMediaSlide()">›</button>
+            
+            <!-- Slide 1: Article Summary -->
+            <div class="media-slide" id="slide0">
+              <div class="media-content" id="mediaContent"></div>
+            </div>
+            
+            <!-- Slide 2: Quote Image -->
+            <div class="media-slide" id="slide1">
+              <div class="media-content quote-slide" id="quoteContent"></div>
+            </div>
+            
+            <!-- Slide 3: Video/Shorts -->
+            <div class="media-slide" id="slide2">
+              <div class="media-content video-slide" id="videoContent"></div>
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+
+      <!-- Comments Zone -->
+      <div class="zone" id="zoneComments" onclick="setFocus('comments')">
+        <div class="zone-header">
+          <span class="zone-title">💬 Reactions</span>
+          <button class="zone-expand-btn" onclick="event.stopPropagation();toggleExpand('comments')">⧉</button>
+        </div>
+        <div class="zone-body" style="flex-direction: column;">
+          <div class="reactions-toolbar" id="reactionsToolbar">
+            <button class="reaction-filter-btn active" onclick="filterReactions('all', this)">All</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('twitter', this)">X/Twitter</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('reddit', this)">Reddit</button>
+            <button class="reaction-filter-btn" onclick="filterReactions('instagram', this)">Instagram</button>
+          </div>
+          <div class="comments-container" id="commentsContainer"></div>
+        </div>
+      </div>
+
+      <!-- Source Zone -->
+      <div class="zone" id="zoneSource" onclick="setFocus('source')">
+        <div class="zone-header">
+          <span class="zone-title">📰 Source</span>
+          <button class="zone-expand-btn" onclick="event.stopPropagation();toggleExpand('source')">⧉</button>
+        </div>
+        <div class="zone-body">
+          <div class="source-container" id="sourceContainer"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Camera Corner -->
+<div class="camera-corner" id="cameraCorner">
+  <div class="camera-placeholder" id="cameraPlaceholder" onclick="openModal()">
+    <span style="font-size: 24px;">📷</span>
+    <span style="font-size: 0.7rem;">Setup Camera & OBS</span>
+  </div>
+  <video id="cameraVideo" autoplay muted style="display:none;"></video>
+  <div class="camera-ui" id="cameraUI" style="display:none;">
+    <div class="camera-rec">
+      <div class="rec-dot" id="recDot"></div>
+      <span class="rec-label" id="recLabel">REC</span>
+      <span class="rec-time" id="recTime"></span>
+    </div>
+    <div class="camera-controls">
+      <button class="camera-btn" onclick="toggleMute()" id="btnMute" title="Toggle Mic">🎤</button>
+      <button class="camera-btn" onclick="resizeCamera(-20)" title="Smaller">−</button>
+      <button class="camera-btn" onclick="resizeCamera(20)" title="Larger">+</button>
+      <button class="camera-btn" onclick="flipCamera()" title="Flip">↔</button>
+      <button class="camera-btn record-btn" id="btnRecord" onclick="toggleRecording()" title="Record">
+        <div class="btn-icon"></div>
+      </button>
+      <button class="camera-btn" onclick="disconnectCamera()" id="btnDisconnect" title="Turn Off Camera" style="background: #333;">📴</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recording Overlay -->
+<div class="recording-overlay" id="recordingOverlay">
+  <div class="rec-dot"></div>
+  <span>REC</span>
+  <span id="overlayTime">00:00</span>
+</div>
+
+<!-- Keyboard Hints -->
+<div class="keyboard-hints">
+  <span><span class="hint-key">Q</span> Cycle Graph</span>
+  <span><span class="hint-key">1-4</span> Focus Zone</span>
+  <span><span class="hint-key">N</span> Notes</span>
+  <span><span class="hint-key">ESC</span> Exit</span>
+</div>
+
+<!-- OBS Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="obsModal">
+    <h3>🔌 OBS Setup</h3>
+    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; background: var(--bg-tertiary); padding: 12px; border-radius: 8px;">
+      <strong style="color: var(--text-primary);">Setup Steps:</strong><br><br>
+      <strong>1.</strong> Install OBS Virtual Camera plugin<br>
+      <span style="color: var(--text-muted); font-size: 0.7rem;">→ obsproject.com → Browse Plugins → VirtualCam</span><br><br>
+      <strong>2.</strong> In OBS: Start virtual camera<br>
+      <span style="color: var(--text-muted); font-size: 0.7rem;">→ Tools → Start Virtual Camera</span><br><br>
+      <strong>3.</strong> Enable OBS WebSocket<br>
+      <span style="color: var(--text-muted); font-size: 0.7rem;">→ Tools → WebSocket Server Settings → Enable</span>
+    </div>
+    <div class="modal-field">
+      <label>WebSocket Host</label>
+      <input type="text" id="obsHost" value="localhost">
+    </div>
+    <div class="modal-field">
+      <label>WebSocket Port</label>
+      <input type="number" id="obsPort" value="4455">
+    </div>
+    <div class="modal-field">
+      <label>Password (if set)</label>
+      <input type="password" id="obsPassword" placeholder="Optional">
+    </div>
+    <div class="modal-field" style="display: flex; align-items: center; gap: 8px;">
+      <input type="checkbox" id="obsRemember" checked style="width: auto;">
+      <label style="font-size: 0.75rem; color: var(--text-secondary); text-transform: none; letter-spacing: 0;">Remember settings</label>
+    </div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeModal()">Cancel</button>
+      <button class="save" onclick="connectOBS()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// State
+let obs = null;
+let isRecording = false;
+let recordingStart = null;
+let recTimer = null;
+let cameraStream = null;
+let topics = [];
+let currentTopic = null;
+let currentGraphState = 0;
+let focusedZone = null;
+let expandedZone = null;
+let isMuted = false;
+let isFlipped = true;
+let cameraWidth = 200;
+let cameraHeight = 150;
+let currentChart = null;
+let cameraDragging = false;
+let cameraDragOffset = { x: 0, y: 0 };
+let speakerNotesOpen = false;
+let activeNoteIndex = -1;
+
+// Zone references
+const zones = {
+  graph: document.getElementById('zoneGraph'),
+  media: document.getElementById('zoneMedia'),
+  comments: document.getElementById('zoneComments'),
+  source: document.getElementById('zoneSource')
+};
+
+// Initialize
+async function init() {
+  await loadTopics();
+  renderTopics();
+  if (topics.length > 0) selectTopic(0);
+  loadCameraSettings();
+  // Don't auto-connect - user must click camera first
+  initCameraDrag();
+}
+
+// Load topics
+async function loadTopics() {
+  const indexData = await fetch('topics/index.json').then(r => r.json());
+  for (const topicFile of indexData.topics) {
+    const topic = await fetch(`topics/${topicFile}`).then(r => r.json());
+    topics.push(topic);
+  }
+}
+
+// Render topic list
+function renderTopics() {
+  const list = document.getElementById('topicList');
+  list.innerHTML = topics.map((t, i) => `
+    <div class="topic-item${i === 0 ? ' active' : ''}" data-index="${i}">
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-meta">
+        <span class="topic-category">${t.meta.category}</span>
+        <span>${t.meta.views} views</span>
+      </div>
+    </div>
+  `).join('');
+  
+  list.querySelectorAll('.topic-item').forEach(item => {
+    item.addEventListener('click', () => {
+      list.querySelectorAll('.topic-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+      selectTopic(parseInt(item.dataset.index));
+    });
+  });
+}
+
+// Select topic
+async function selectTopic(idx) {
+  const topic = topics[idx];
+  currentTopic = topic;
+  currentGraphState = 0;
+  activeNoteIndex = -1;
+
+  // Trigger reload animations on all zones
+  Object.values(zones).forEach(z => {
+    z.classList.remove('reloading');
+    void z.offsetWidth; // force reflow
+    z.classList.add('reloading');
+    setTimeout(() => z.classList.remove('reloading'), 500);
+  });
+
+  // Update notes
+  renderNotes();
+
+  // Update graph
+  renderGraphControls();
+  updateGraph();
+
+  // Update media
+  updateMedia();
+
+  // Update comments
+  allReactions = topic.reactions || [];
+  currentFilter = 'all';
+  document.querySelectorAll('.reaction-filter-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('.reaction-filter-btn');
+  if (allBtn) allBtn.classList.add('active');
+  renderComments(allReactions);
+
+  // Update source
+  renderSource();
+
+  // Focus graph
+  setFocus('graph');
+}
+
+// Render speaker notes
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  if (!currentTopic?.speakerNotes) {
+    list.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem;">No notes for this topic</div>';
+    return;
+  }
+
+  const score = currentTopic.meta?.score || 0;
+  const tier = currentTopic.meta?.tier || 2;
+  const tierLabel = currentTopic.meta?.tier_label || '';
+  const tierClass = `tier-${tier}`;
+
+  list.innerHTML = `
+    <div class="notes-score">
+      <span>Story score</span>
+      <span class="notes-score-val">${score}/100 <span class="tier-badge ${tierClass}">${tierLabel}</span></span>
+    </div>
+    ${currentTopic.speakerNotes.map((note, i) => `
+      <div class="note-item${i === activeNoteIndex ? ' active' : ''}" data-index="${i}" onclick="selectNote(${i})">
+        ${note}
+      </div>
+    `).join('')}
+  `;
+}
+
+// Select note
+function selectNote(idx) {
+  activeNoteIndex = idx;
+  document.querySelectorAll('.note-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+
+// Toggle speaker notes
+function toggleNotes() {
+  speakerNotesOpen = !speakerNotesOpen;
+  document.body.classList.toggle('speaker-notes-open', speakerNotesOpen);
+  const btn = document.getElementById('notesToggleBtn');
+  btn.textContent = speakerNotesOpen ? '📖' : '📝';
+  btn.title = speakerNotesOpen ? 'Close Notes' : 'Open Notes';
+}
+
+// Render graph state buttons
+function renderGraphControls() {
+  const ctrl = document.getElementById('graphControls');
+  const select = document.getElementById('graphTypeSelect');
+  if (!ctrl || !currentTopic?.graph) return;
+  
+  const graph = currentTopic.graph;
+  
+  // New simple format: just show the talk point, hide dropdown
+  if (graph.chart) {
+    ctrl.innerHTML = '';
+    if (select) select.style.display = 'none';
+    currentChartType = 'simple';
+    return;
+  }
+  
+  // Legacy formats
+  if (graph.available_charts?.some(c => c.startsWith('chart_'))) {
+    const charts = graph.available_charts;
+    ctrl.innerHTML = '';
+    if (select) {
+      select.innerHTML = charts.map((c, i) => {
+        const label = graph.data[c]?.label || `Chart ${i+1}`;
+        return `<option value="${c}">${label}</option>`;
+      }).join('');
+      select.style.display = 'inline-block';
+    }
+    currentChartType = charts[0];
+  } else if (graph.states) {
+    const states = graph.states || [];
+    ctrl.innerHTML = states.map((s, i) => `
+      <button class="graph-state-btn${i === 0 ? ' active' : ''}" onclick="setGraphState(${i}, this)">
+        ${s.replace(/_/g, ' ')}
+      </button>
+    `).join('');
+    if (select) select.style.display = 'none';
+  } else {
+    if (select) select.style.display = 'inline-block';
+  }
+}
+
+function setGraphState(idx, btn) {
+  currentGraphState = idx;
+  document.querySelectorAll('.graph-state-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  updateGraph();
+}
+
+// Update graph - handles old format, dynamic format, and new simple format
+let currentChartType = 'recommended';
+
+function updateGraph() {
+  if (!currentTopic?.graph) return;
+  
+  const graph = currentTopic.graph;
+  let chartConfig = null;
+  let chartLabel = '';
+  
+  // New simple format: graph has a single "chart" object
+  if (graph.chart) {
+    chartConfig = graph.chart;
+    chartLabel = chartConfig?.label || 'Chart';
+    
+    // Hide dropdown for simple format
+    const select = document.getElementById('graphTypeSelect');
+    if (select) select.style.display = 'none';
+  }
+  // Legacy: chart_1, chart_2 format
+  else if (graph.data && graph.available_charts?.some(c => c.startsWith('chart_'))) {
+    const availableCharts = graph.available_charts;
+    let chartKey = currentChartType;
+    
+    if (currentChartType === 'recommended' || !availableCharts.includes(currentChartType)) {
+      chartKey = availableCharts[0];
+    }
+    
+    chartConfig = graph.data[chartKey];
+    chartLabel = chartConfig?.label || 'Commentary Chart';
+  } else if (graph.data && graph.recommended_chart) {
+    // Legacy dynamic format
+    const availableCharts = graph.available_charts || ['bar', 'doughnut', 'line'];
+    
+    if (currentChartType === 'recommended') {
+      const recommendedKey = graph.recommended_chart;
+      if (graph.data[recommendedKey]) {
+        chartConfig = graph.data[recommendedKey];
+      } else if (graph.available_charts?.length > 0) {
+        chartConfig = graph.data[graph.available_charts[0]];
+      }
+      chartLabel = graph.story_analysis?.story_type ? 
+        `Story: ${graph.story_analysis.story_type.charAt(0).toUpperCase() + graph.story_analysis.story_type.slice(1)}` : 
+        'Analytics';
+    } else if (currentChartType === 'timeline') {
+      chartConfig = graph.data.timeline;
+      chartLabel = 'Timeline';
+    } else if (currentChartType === 'breakdown') {
+      chartConfig = graph.data.breakdown;
+      chartLabel = 'Key Figures';
+    } else if (currentChartType === 'comparison') {
+      chartConfig = graph.data.comparison;
+      chartLabel = 'Comparison';
+    } else if (currentChartType === 'sentiment') {
+      chartConfig = graph.data.sentiment;
+      chartLabel = 'Sentiment';
+    }
+  } else {
+    // Old static format fallback
+    const states = graph.states || ['controversy', 'social_buzz', 'sentiment'];
+    const stateKey = states[currentGraphState] || states[0];
+    chartConfig = graph.data?.[stateKey];
+    chartLabel = chartConfig?.label || stateKey;
+  }
+
+  if (!chartConfig) {
+    console.log('No chart config found');
+    return;
+  }
+
+  document.getElementById('graphStateIndicator').textContent = chartLabel;
+
+  if (currentChart) currentChart.destroy();
+
+  const ctx = document.getElementById('chartCanvas').getContext('2d');
+  
+  const chartType = chartConfig.type || 'bar';
+  const chartData = chartConfig.data || {};
+  const chartOptions = chartConfig.options || {};
+  
+  currentChart = new Chart(ctx, {
+    type: chartType,
+    data: chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 400 },
+      ...chartOptions,
+      plugins: {
+        title: {
+          display: true,
+          text: chartLabel,
+          color: '#333',
+          font: { size: 14, weight: 'bold' },
+          padding: { bottom: 10 }
+        },
+        legend: {
+          display: chartType !== 'line' || (chartData.datasets || []).length > 1,
+          labels: { color: '#333', font: { size: 10 } },
+          position: 'bottom'
+        },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          titleColor: '#fff',
+          bodyColor: '#ccc',
+          borderColor: '#333',
+          borderWidth: 1
+        }
+      },
+      scales: chartType !== 'doughnut' ? {
+        x: { grid: { color: '#eee' }, ticks: { color: '#333', font: { size: 10 } } },
+        y: { grid: { color: '#eee' }, ticks: { color: '#333', font: { size: 10 } } }
+      } : undefined
+    }
+  });
+}
+
+// Cycle graph state (keyboard Q)
+function cycleGraph() {
+  if (!currentTopic?.graph) return;
+  
+  // Handle new dynamic format
+  if (currentTopic.graph.available_charts) {
+    const charts = currentTopic.graph.available_charts;
+    const currentIdx = charts.indexOf(currentChartType);
+    const nextIdx = (currentIdx + 1) % charts.length;
+    currentChartType = charts[nextIdx];
+    if (currentChartType === 'recommended') currentChartType = charts[0];
+  } else {
+    // Old format fallback
+    const states = currentTopic.graph.states || ['controversy', 'social_buzz', 'sentiment'];
+    currentGraphState = (currentGraphState + 1) % states.length;
+  }
+  
+  // Update button active state
+  document.querySelectorAll('.graph-state-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === currentGraphState);
+  });
+  updateGraph();
+}
+
+// Set specific chart type
+function setChartType(type) {
+  currentChartType = type;
+  updateGraph();
+  // Update dropdown
+  const select = document.getElementById('graphTypeSelect');
+  if (select) select.value = type;
+}
+
+// Toggle legend
+let legendVisible = true;
+function toggleLegend() {
+  legendVisible = !legendVisible;
+  if (currentChart) {
+    currentChart.options.plugins.legend.display = legendVisible;
+    currentChart.update();
+  }
+  document.getElementById('legendToggle').classList.toggle('active', legendVisible);
+}
+
+// Toggle data table - shows actual chart data
+let dataTableVisible = false;
+function toggleDataTable() {
+  dataTableVisible = !dataTableVisible;
+  const table = document.getElementById('dataTable');
+  const btn = document.getElementById('dataTableToggle');
+  
+  if (dataTableVisible && currentTopic?.graph) {
+    const graph = currentTopic.graph;
+    let html = '<table class="data-table-content"><thead><tr><th>Label</th><th>Value</th></tr></thead><tbody>';
+    
+    // Get chart data
+    let chartData = null;
+    let dataValues = [];
+    let labels = [];
+    
+    if (graph.chart?.data) {
+      chartData = graph.chart.data;
+    } else if (graph.data) {
+      // Legacy format
+      const availableCharts = graph.available_charts || [];
+      if (availableCharts.length > 0) {
+        chartData = graph.data[availableCharts[0]]?.data;
+      }
+    }
+    
+    if (chartData) {
+      labels = chartData.labels || [];
+      const datasets = chartData.datasets || [];
+      if (datasets.length > 0) {
+        dataValues = datasets[0].data || [];
+      }
+      
+      for (let i = 0; i < labels.length; i++) {
+        html += '<tr><td>' + (labels[i] || '') + '</td><td>' + (dataValues[i] !== undefined ? dataValues[i] : '-') + '</td></tr>';
+      }
+    } else {
+      html += '<tr><td colspan="2">No data available</td></tr>';
+    }
+    
+    html += '</tbody></table>';
+    table.innerHTML = html;
+  }
+  
+  table.style.display = dataTableVisible ? 'block' : 'none';
+  btn.classList.toggle('active', dataTableVisible);
+}
+
+// Export chart as PNG
+function exportChart() {
+  if (!currentChart) return;
+  const link = document.createElement('a');
+  link.download = 'chart-' + Date.now() + '.png';
+  link.href = currentChart.toBase64Image();
+  link.click();
+}
+
+// Show/hide expand controls based on zone expansion
+function updateGraphExpandControls(expanded) {
+  const controls = document.getElementById('graphExpandControls');
+  const metricsDiv = document.getElementById('graphMetrics');
+  
+  // Always show controls when expanded
+  controls.style.display = expanded ? 'flex' : 'none';
+  
+  // Show topic info in metrics area
+  if (currentTopic?.graph) {
+    const graph = currentTopic.graph;
+    let html = '';
+    
+    // Show story type if available
+    if (graph.type) {
+      html += '<div class="graph-metrics-row"><span class="graph-metrics-label">Story Type</span><span class="graph-metrics-value">' + graph.type.toUpperCase() + '</span></div>';
+    }
+    
+    // Show chart label
+    if (graph.chart?.label) {
+      html += '<div class="graph-metrics-row"><span class="graph-metrics-label">Chart</span><span class="graph-metrics-value">' + graph.chart.label + '</span></div>';
+    }
+    
+    metricsDiv.innerHTML = html || '<div class="graph-metrics-row"><span class="graph-metrics-label">No extra data</span></div>';
+  }
+}
+
+// Reaction filtering
+let allReactions = [];
+let currentFilter = 'all';
+
+function filterReactions(platform, btn) {
+  currentFilter = platform;
+  document.querySelectorAll('.reaction-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const filtered = platform === 'all'
+    ? allReactions
+    : allReactions.filter(r => r.platform === platform);
+  renderComments(filtered);
+}
+
+// Reactions state
+let pinnedReaction = null;
+let expandedReaction = null;
+
+// Render comments with controls
+function renderComments(reactions) {
+  const container = document.getElementById('commentsContainer');
+  const list = reactions || allReactions;
+
+  if (!list.length) {
+    container.innerHTML = '<div style="color: var(--text-muted); padding: 12px;">No reactions yet</div>';
+    return;
+  }
+
+  container.innerHTML = list.map((r, idx) => {
+    const isPinned = pinnedReaction && pinnedReaction.author === r.author && pinnedReaction.text === r.text;
+    const isExpanded = expandedReaction && expandedReaction.author === r.author && expandedReaction.text === r.text;
+    
+    return `
+      <div class="comment ${isPinned ? 'pinned' : ''} ${isExpanded ? 'expanded' : ''}" 
+           onclick="event.stopPropagation();toggleReactionExpand(${idx})">
+        ${isPinned ? '<div class="pinned-badge">📌 Pinned</div>' : ''}
+        <img class="comment-avatar" src="${r.avatar}" alt="${r.author}" onerror="this.src='https://i.pravatar.cc/150?u=${r.author}'">
+        <div class="comment-body">
+          <div class="comment-header">
+            <span class="comment-author">@${r.author}</span>
+            <span class="comment-platform">${r.platform}</span>
+            ${r.subreddit ? `<span class="comment-sub">${r.subreddit}</span>` : ''}
+          </div>
+          ${isExpanded ? `
+            <p class="comment-text full">${r.text}</p>
+            <div class="comment-controls">
+              <button class="reaction-btn ${isPinned ? 'active' : ''}" onclick="event.stopPropagation();togglePinReaction(${idx})">
+                ${isPinned ? '📌 Pinned' : '📌 Pin'}
+              </button>
+              <button class="reaction-btn" onclick="event.stopPropagation();copyReactionText(${idx})">
+                📋 Copy
+              </button>
+              ${r.url ? `<button class="reaction-btn" onclick="event.stopPropagation();openReactionSource(${idx})">🔗 Source</button>` : ''}
+            </div>
+          ` : `
+            <p class="comment-text">${r.text}</p>
+          `}
+          <div class="comment-likes">❤️ ${r.likes?.toLocaleString() || 0} likes${r.replies ? ` • 💬 ${r.replies} replies` : ''}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Toggle reaction expand
+function toggleReactionExpand(idx) {
+  const reaction = allReactions[idx];
+  if (expandedReaction && expandedReaction.author === reaction.author && expandedReaction.text === reaction.text) {
+    expandedReaction = null;
+  } else {
+    expandedReaction = reaction;
+  }
+  renderComments();
+}
+
+// Toggle pin reaction
+function togglePinReaction(idx) {
+  const reaction = allReactions[idx];
+  if (pinnedReaction && pinnedReaction.author === reaction.author && pinnedReaction.text === reaction.text) {
+    pinnedReaction = null;
+  } else {
+    pinnedReaction = reaction;
+  }
+  renderComments();
+}
+
+// Copy reaction text
+function copyReactionText(idx) {
+  const reaction = allReactions[idx];
+  navigator.clipboard.writeText(reaction.text).then(() => {
+    // Could show toast notification
+    alert('Copied to clipboard!');
+  });
+}
+
+// Open reaction source
+function openReactionSource(idx) {
+  const reaction = allReactions[idx];
+  if (reaction.url) {
+    window.open(reaction.url, '_blank');
+  }
+}
+
+// Render source with stats
+function renderSource() {
+  const container = document.getElementById('sourceContainer');
+
+  if (!currentTopic?.source) {
+    container.innerHTML = '<div style="color: var(--text-muted);">No source</div>';
+    return;
+  }
+
+  const source = currentTopic.source;
+  const score = currentTopic.meta?.score || 0;
+  const flags = currentTopic.meta?.flags || [];
+  const tier = currentTopic.meta?.tier || 2;
+  const tierClass = `tier-${tier}`;
+  const tierLabel = currentTopic.meta?.tier_label || '';
+
+  container.innerHTML = `
+    <a href="${source.url}" target="_blank" class="source-card">
+      <div class="source-icon">📰</div>
+      <div class="source-info">
+        <div class="source-title">${source.title}</div>
+        <div class="source-meta">
+          <span>${source.publisher}</span>
+          ${source.author ? `<span>by ${source.author}</span>` : ''}
+          ${source.verified ? '<span class="source-verified">✓</span>' : ''}
+        </div>
+      </div>
+    </a>
+    <div class="source-stats">
+      <div class="source-stat">
+        <span class="source-stat-value">${score}</span>
+        <span class="source-stat-label">Score</span>
+      </div>
+      <div class="source-stat">
+        <span class="source-stat-value tier-badge ${tierClass}">${tierLabel}</span>
+        <span class="source-stat-label">Tier</span>
+      </div>
+      <div class="source-stat" style="flex:1; align-items:flex-start;">
+        <span class="source-stat-value" style="font-size:0.65rem; color: var(--text-muted); font-family: sans-serif; flex-wrap:wrap; display:flex; gap:4px;">
+          ${flags.slice(0,6).map(f => `<span style="background:var(--bg-tertiary);padding:2px 6px;border-radius:3px;">${f}</span>`).join('')}
+        </span>
+        <span class="source-stat-label">Signals</span>
+      </div>
+    </div>
+  `;
+}
+
+// Media Carousel State
+let currentMediaSlide = 0;
+let mediaPanX = 0;
+let mediaPanY = 0;
+let mediaZoom = 1;
+let currentVideoId = null;
+let videoSuggestions = [];
+
+// Update media - populates the 3 slides
+function updateMedia() {
+  if (!currentTopic?.media) {
+    document.getElementById('slide0').innerHTML = '<div style="color:#888;padding:20px;">No media</div>';
+    return;
+  }
+  
+  const media = currentTopic.media;
+  
+  // Reset state
+  currentMediaSlide = 0;
+  mediaPanX = 0;
+  mediaPanY = 0;
+  mediaZoom = 1;
+  currentVideoId = null;
+  
+  // Slide 1: Article Summary + Image
+  const article = media.article || {};
+  const topicKeywords = media.browser?.keywords || media.video_suggestions || [];
+  const topicLabel = topicKeywords.slice(0, 3).join(' • ') || currentTopic?.name?.slice(0, 30) || 'Topic';
+  
+  document.getElementById('mediaContent').innerHTML = `
+    <div class="article-thumbnail" style="flex:1;min-height:0;position:relative;">
+  <img src="${article.thumbnail || 'assets/clip.png'}" onerror="this.onerror=null;this.src='assets/clip.png';" alt="${article.title || 'Article'}" style="width:100%;height:100%;object-fit:cover;">
+      <span class="article-badge">📰 Article</span>
+      <div class="media-topic-label">${topicLabel}</div>
+    </div>
+    <div class="article-content" style="flex:0 0 auto;padding:8px;">
+      <h3 class="article-title" style="font-size:0.8rem;margin-bottom:4px;">${article.title || ''}</h3>
+      <p class="article-description" style="font-size:0.7rem;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${article.description || ''}</p>
+      <div class="article-meta">
+        <span class="article-publisher">${article.publisher || ''}</span>
+      </div>
+    </div>
+  `;
+  
+  // Slide 2: Quote Image - clean layout
+  const quoteData = media.quote_image || {};
+  const quoteImage = quoteData.image || article.thumbnail || 'assets/clip.png';
+  const quoteCaption = quoteData.image_source === 'article'
+    ? 'Image: from article'
+    : (quoteData.image_source === 'wikipedia' ? 'Image: related (Wikipedia)' : '');
+  document.getElementById('quoteContent').innerHTML = `
+    <img src="${quoteImage}" onerror="this.onerror=null;this.src='assets/clip.png';" class="quote-image" alt="Related">
+    ${quoteCaption ? `<div class="quote-image-caption">${quoteCaption}</div>` : ''}
+    <p class="quote-text">${quoteData.text || 'No quote available'}</p>
+    ${quoteData.summary ? `<p class="quote-summary">${quoteData.summary}</p>` : ''}
+  `;
+  
+  // Slide 3: Video/Shorts
+  videoSuggestions = media.video_suggestions || [];
+  renderVideoSlide();
+  
+  // Show first slide
+  showMediaSlide(0);
+}
+
+// Mini Browser State
+let browserSearchQuery = '';
+let browserResults = { videos: [], articles: [] };
+let articlePreview = null;
+let searchCache = {};
+let currentVideoUrl = null; // Track current video URL
+
+// Render video slide - Mini Browser
+function renderVideoSlide() {
+  const videoContent = document.getElementById('videoContent');
+  const media = currentTopic?.media || {};
+  const browser = media.browser || {};
+  const suggestions = media.video_suggestions || [];
+  
+  // If viewing video inline, show it
+  if (currentVideoUrl) {
+    showVideoPlayer(currentVideoUrl);
+    return;
+  }
+  
+  // Get pre-fetched data
+  const preVideos = browser.videos || [];
+  const preArticles = browser.articles || [];
+  const summary = browser.summary || '';
+  const keywords = browser.keywords || suggestions;
+  
+  // Build suggestions buttons - link to search.html
+  const suggestionsHtml = keywords.length > 0 ? `
+    <div class="browser-suggestions">
+      <div class="browser-suggestion-label">Search Videos:</div>
+      <div class="browser-suggestion-btns">
+        ${keywords.slice(0, 4).map(k => `<button class="browser-suggestion-btn" onclick="event.stopPropagation();openSearchPage('${k}')">${k}</button>`).join('')}
+      </div>
+      <button class="browser-suggestion-btn" style="margin-top:8px;width:100%;" onclick="event.stopPropagation();openSearchPage(document.getElementById('browserSearchInput')?.value || '${keywords[0] || ''}')">🔍 Open Full Search</button>
+    </div>
+  ` : `<button class="browser-suggestion-btn" style="width:100%;" onclick="event.stopPropagation();openSearchPage('${browser.search_query || ''}')">🔍 Search More Videos</button>`;
+  
+  // If showing article preview
+  if (articlePreview) {
+    videoContent.innerHTML = `
+      <div class="article-preview">
+        <button class="preview-back-btn" onclick="event.stopPropagation();articlePreview=null;renderVideoSlide();">← Back</button>
+        <div class="preview-title">${articlePreview.title}</div>
+        <div class="preview-source">${articlePreview.source}</div>
+        <div class="preview-url">${articlePreview.url}</div>
+      </div>
+    `;
+    return;
+  }
+  
+  // Build results display
+  const displayVideos = browserResults.videos.length > 0 ? browserResults.videos : preVideos;
+  const displayArticles = browserResults.articles.length > 0 ? browserResults.articles : preArticles;
+  
+  videoContent.innerHTML = `
+    <div class="browser-container">
+      <!-- Search Input -->
+      <div class="browser-search" onclick="event.stopPropagation()">
+        <input type="text" id="browserSearchInput" class="browser-search-input" 
+          placeholder="Search..." value="${browserSearchQuery}" 
+          onkeypress="if(event.key==='Enter'){doSearch(this.value)}">
+        <button class="browser-search-btn" onclick="event.stopPropagation();doSearch(document.getElementById('browserSearchInput').value)">Go</button>
+      </div>
+      
+      <!-- Summary (Gemini-style) -->
+      ${summary ? `
+        <div class="browser-summary">
+          <div class="browser-summary-label">📝 Summary</div>
+          <div class="browser-summary-text">${summary}</div>
+        </div>
+      ` : ''}
+      
+      <!-- Videos Section - Link to search.html -->
+      <div class="browser-section">
+        <div class="browser-section-label">🎬 Videos</div>
+        <button class="browser-suggestion-btn" style="width:100%;padding:15px;" onclick="event.stopPropagation();openSearchPage('${browser.search_query || keywords[0] || ''}')">
+          🔍 Search Videos
+        </button>
+        <p style="font-size:0.7rem;color:#666;margin-top:8px;text-align:center;">
+          Click to open video search
+        </p>
+      </div>
+      
+      <!-- Articles Section -->
+      <div class="browser-section">
+        <div class="browser-section-label">📰 Related Articles</div>
+        ${displayArticles.length > 0 ? `
+          <div class="browser-articles">
+            ${displayArticles.slice(0, 5).map(a => `
+              <div class="browser-article-item" onclick="event.stopPropagation();showArticlePreview('${encodeURIComponent(JSON.stringify(a))}')">
+                <div class="browser-article-title">${a.title || 'Article'}</div>
+                <div class="browser-article-source">${a.source || ''}</div>
+              </div>
+            `).join('')}
+          </div>
+        ` : `<div class="browser-empty">No articles - use search above</div>`}
+      </div>
+      
+      <!-- Suggestion Buttons -->
+      ${suggestionsHtml}
+    </div>
+  `;
+}
+
+// Do search (inline - no new tabs)
+function doSearch(query) {
+  if (!query || query.trim() === '') return;
+  
+  browserSearchQuery = query;
+  
+  // Check cache first
+  if (searchCache[query]) {
+    browserResults = searchCache[query];
+    renderVideoSlide();
+    return;
+  }
+  
+  // Show loading
+  const videoContent = document.getElementById('videoContent');
+  videoContent.innerHTML = `<div class="browser-loading">Searching for "${query}"...</div>`;
+  
+  // ALWAYS provide results - use smart fallbacks
+  const results = {
+    videos: [],
+    articles: [],
+    summary: `Latest news and updates about ${query}.`
+  };
+  
+  // Add video results from YouTube
+  results.videos = [
+    { title: `Latest: ${query}`, url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' news')}`, source: 'YouTube' },
+    { title: `Analysis: ${query}`, url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' reaction')}`, source: 'YouTube' },
+    { title: `Highlights: ${query}`, url: `https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' highlights')}`, source: 'YouTube' },
+  ];
+  
+  // Add article results - use Google News style links
+  results.articles = [
+    { title: `Latest ${query} News - Google`, url: `https://news.google.com/search?q=${encodeURIComponent(query)}`, source: 'Google News' },
+    { title: `${query} - BBC Sport`, url: `https://www.bbc.com/search?q=${encodeURIComponent(query)}`, source: 'BBC' },
+    { title: `${query} - Sky Sports`, url: `https://www.skysports.com/search?q=${encodeURIComponent(query)}`, source: 'Sky Sports' },
+    { title: `${query} - Mirror`, url: `https://www.mirror.co.uk/search/all/${encodeURIComponent(query.replace(' ', '-'))}`, source: 'Mirror' },
+    { title: `${query} - ESPN`, url: `https://www.espn.com/search?q=${encodeURIComponent(query)}`, source: 'ESPN' },
+    { title: `Reddit: ${query}`, url: `https://old.reddit.com/search/?q=${encodeURIComponent(query)}`, source: 'Reddit' },
+  ];
+  
+  browserResults = results;
+  searchCache[query] = browserResults;
+  renderVideoSlide();
+}
+
+// Play video inline
+function playVideo(url) {
+  currentVideoUrl = url;
+  showVideoPlayer(url);
+}
+
+// Show video player (extracted for reuse)
+function showVideoPlayer(url) {
+  const videoContent = document.getElementById('videoContent');
+  
+  // Extract video ID or use URL
+  let videoSrc = '';
+  
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    const videoId = extractVideoId(url);
+    if (videoId) {
+      videoSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+  }
+  
+  if (videoSrc) {
+    videoContent.innerHTML = `
+      <div class="video-inline-player">
+        <button class="video-back-btn" onclick="event.stopPropagation();currentVideoUrl=null;renderVideoSlide();">← Back</button>
+        <iframe src="${videoSrc}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    `;
+  } else {
+    // Can't embed - show message with back that clears video state
+    videoContent.innerHTML = `
+      <div class="video-inline-player">
+        <button class="video-back-btn" onclick="event.stopPropagation();currentVideoUrl=null;renderVideoSlide();">← Back</button>
+        <div class="browser-error">Video cannot be embedded directly.<br><br>URL: ${url}</div>
+      </div>
+    `;
+  }
+}
+
+function extractVideoId(url) {
+  // YouTube URL parsing
+  const patterns = [
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtu\.be\/([^?]+)/,
+    /youtube\.com\/embed\/([^?]+)/
+  ];
+  for (const p of patterns) {
+    const match = url.match(p);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+// Show article preview inline
+function showArticlePreview(encoded) {
+  try {
+    const article = JSON.parse(decodeURIComponent(encoded));
+    articlePreview = article;
+    renderVideoSlide();
+  } catch (e) {
+    console.error('Article preview error:', e);
+  }
+}
+
+// Open search.html page
+function openSearchPage(query) {
+  if (!query || query.trim() === '') return;
+  // Navigate to search.html with query
+  window.location.href = 'search.html?q=' + encodeURIComponent(query.trim());
+}
+
+// Carousel navigation
+function showMediaSlide(index) {
+  currentMediaSlide = index;
+  
+  // Update slide visibility
+  document.querySelectorAll('.media-slide').forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+  });
+  
+  // Update indicators
+  document.querySelectorAll('.slide-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+  
+  // Hide expand controls on slide 1 (quote slide)
+  const controls = document.getElementById('mediaExpandControls');
+  if (controls) {
+    controls.style.display = (index === 1) ? 'none' : '';
+  }
+}
+
+function nextMediaSlide() {
+  showMediaSlide((currentMediaSlide + 1) % 3);
+}
+
+function prevMediaSlide() {
+  showMediaSlide((currentMediaSlide - 1 + 3) % 3);
+}
+
+// Media expand controls
+function zoomMedia(delta) {
+  mediaZoom = Math.max(0.5, Math.min(2, mediaZoom + delta));
+  applyMediaTransform();
+}
+
+function panMedia(dx, dy) {
+  mediaPanX += dx;
+  mediaPanY += dy;
+  applyMediaTransform();
+}
+
+function resetMedia() {
+  mediaPanX = 0;
+  mediaPanY = 0;
+  mediaZoom = 1;
+  applyMediaTransform();
+}
+
+function applyMediaTransform() {
+  const content = document.querySelector('.media-slide.active .media-content');
+  if (content) {
+    content.style.transform = `translate(${mediaPanX}px, ${mediaPanY}px) scale(${mediaZoom})`;
+  }
+}
+
+// Focus zone
+function setFocus(name) {
+  if (expandedZone) return;
+  focusedZone = name;
+  Object.values(zones).forEach(z => z.classList.remove('focused'));
+  if (zones[name]) zones[name].classList.add('focused');
+}
+
+// Toggle expand
+function toggleExpand(name) {
+  const zone = zones[name];
+  const isExpanding = expandedZone !== name;
+  
+  if (expandedZone === name) {
+    zone.classList.remove('expanded');
+    document.body.classList.remove('has-expanded');
+    expandedZone = null;
+    setFocus(name);
+  } else {
+    Object.values(zones).forEach(z => z.classList.remove('expanded'));
+    if (focusedZone) zones[focusedZone].classList.remove('focused');
+    zone.classList.add('expanded');
+    document.body.classList.add('has-expanded');
+    expandedZone = name;
+  }
+  
+  // Update graph expand controls
+  if (name === 'graph') {
+    updateGraphExpandControls(isExpanding);
+  }
+  
+  // Update media expand controls
+  if (name === 'media') {
+    const controls = document.getElementById('mediaExpandControls');
+    controls.style.display = isExpanding ? 'block' : 'none';
+  }
+}
+
+// Camera controls
+function flipCamera() {
+  isFlipped = !isFlipped;
+  document.getElementById('cameraVideo').style.transform = isFlipped ? 'scaleX(-1)' : 'scaleX(1)';
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  if (cameraStream) {
+    cameraStream.getAudioTracks().forEach(track => track.enabled = !isMuted);
+  }
+  document.getElementById('btnMute').classList.toggle('active', isMuted);
+  document.getElementById('btnMute').textContent = isMuted ? '🔇' : '🎤';
+}
+
+function resizeCamera(delta) {
+  cameraWidth = Math.max(100, Math.min(400, cameraWidth + delta));
+  cameraHeight = Math.round(cameraWidth * 0.75);
+  const cam = document.getElementById('cameraCorner');
+  cam.style.width = cameraWidth + 'px';
+  cam.style.height = cameraHeight + 'px';
+  saveCameraSettings();
+}
+
+function loadCameraSettings() {
+  const sw = localStorage.getItem('cameraWidth');
+  const sh = localStorage.getItem('cameraHeight');
+  if (sw && sh) {
+    cameraWidth = parseInt(sw);
+    cameraHeight = parseInt(sh);
+    const cam = document.getElementById('cameraCorner');
+    cam.style.width = cameraWidth + 'px';
+    cam.style.height = cameraHeight + 'px';
+  }
+}
+
+function saveCameraSettings() {
+  localStorage.setItem('cameraWidth', cameraWidth);
+  localStorage.setItem('cameraHeight', cameraHeight);
+}
+
+// Camera dragging
+function initCameraDrag() {
+  const cam = document.getElementById('cameraCorner');
+  
+  cam.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.camera-controls') || e.target.closest('.camera-placeholder')) return;
+    cameraDragging = true;
+    const rect = cam.getBoundingClientRect();
+    cameraDragOffset.x = e.clientX - rect.left;
+    cameraDragOffset.y = e.clientY - rect.top;
+    cam.style.transition = 'none';
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!cameraDragging) return;
+    const x = e.clientX - cameraDragOffset.x;
+    const y = e.clientY - cameraDragOffset.y;
+    cam.style.left = x + 'px';
+    cam.style.top = y + 'px';
+    cam.style.right = 'auto';
+    cam.style.bottom = 'auto';
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (cameraDragging) {
+      cameraDragging = false;
+      const cam = document.getElementById('cameraCorner');
+      cam.style.transition = '';
+      saveCameraPosition();
+    }
+  });
+}
+
+function saveCameraPosition() {
+  const cam = document.getElementById('cameraCorner');
+  localStorage.setItem('cameraPos', JSON.stringify({
+    left: cam.style.left,
+    top: cam.style.top
+  }));
+}
+
+function loadCameraPosition() {
+  const pos = localStorage.getItem('cameraPos');
+  if (pos) {
+    const cam = document.getElementById('cameraCorner');
+    const p = JSON.parse(pos);
+    cam.style.left = p.left;
+    cam.style.top = p.top;
+    cam.style.right = 'auto';
+    cam.style.bottom = 'auto';
+  }
+}
+
+// OBS & Recording
+async function connectToOBS(h, p, pw, silent = false) {
+  try {
+    if (!window.obs) await loadOBSlib();
+    obs = new OBSWebSocket();
+    await obs.connect({ address: `${h}:${p}`, password: pw });
+    document.getElementById('obsStatus').textContent = 'Live';
+    document.getElementById('obsStatus').className = 'obs-status connected';
+    showCamera();
+  } catch (e) {
+    if (!silent) alert('OBS connection failed: ' + e.message);
+    showCamera();
+    obs = null;
+  }
+}
+
+async function loadOBSlib() {
+  return new Promise(r => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/obs-websocket-js@5.0.3/dist/obs-ws.js';
+    s.onload = r;
+    document.head.appendChild(s);
+  });
+}
+
+function showCamera() {
+  document.getElementById('cameraPlaceholder').style.display = 'none';
+  document.getElementById('cameraVideo').style.display = 'block';
+  document.getElementById('cameraUI').style.display = 'flex';
+  loadCameraPosition();
+  startWebcam();
+}
+
+function disconnectCamera() {
+  // Stop webcam
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+  }
+  
+  // Disconnect OBS
+  if (obs) {
+    obs.disconnect();
+    obs = null;
+  }
+  
+  // Reset UI
+  document.getElementById('cameraPlaceholder').style.display = 'flex';
+  document.getElementById('cameraVideo').style.display = 'none';
+  document.getElementById('cameraVideo').srcObject = null;
+  document.getElementById('cameraUI').style.display = 'none';
+  document.getElementById('obsStatus').textContent = 'OBS';
+  document.getElementById('obsStatus').className = 'obs-status disconnected';
+  
+  // Reset recording state if active
+  if (isRecording) {
+    isRecording = false;
+    stopRecTimer();
+    document.body.classList.remove('recording');
+  }
+}
+
+async function startWebcam() {
+  try {
+    // First try OBS Virtual Camera (preferred)
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const obsCam = devices.find(d => d.label && d.label.includes('OBS'));
+    
+    if (obsCam) {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { deviceId: obsCam.deviceId }, 
+        audio: true 
+      });
+    } else {
+      // Fall back to default webcam
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    }
+    document.getElementById('cameraVideo').srcObject = cameraStream;
+  } catch (e) {
+    console.log('Camera not available:', e);
+  }
+}
+
+function toggleRecording() {
+  isRecording ? stopRec() : startRec();
+}
+
+async function startRec() {
+  if (obs) {
+    await obs.send('StartRecording');
+  }
+  isRecording = true;
+  recordingStart = Date.now();
+  document.body.classList.add('recording');
+  document.getElementById('cameraCorner').classList.add('recording');
+  updateRecUI();
+  startRecTimer();
+}
+
+async function stopRec() {
+  if (obs) {
+    await obs.send('StopRecording');
+  }
+  isRecording = false;
+  stopRecTimer();
+  document.body.classList.remove('recording');
+  document.getElementById('cameraCorner').classList.remove('recording');
+  updateRecUI();
+}
+
+function startRecTimer() {
+  recTimer = setInterval(() => {
+    const elapsed = Date.now() - recordingStart;
+    const m = Math.floor(elapsed / 60000);
+    const s = Math.floor((elapsed % 60000) / 1000);
+    const time = `${m}:${s.toString().padStart(2, '0')}`;
+    document.getElementById('recTime').textContent = time;
+    document.getElementById('overlayTime').textContent = time;
+  }, 1000);
+}
+
+function stopRecTimer() {
+  clearInterval(recTimer);
+  document.getElementById('recTime').textContent = '';
+}
+
+function updateRecUI() {
+  const btn = document.getElementById('btnRecord');
+  const dot = document.getElementById('recDot');
+  const label = document.getElementById('recLabel');
+  
+  btn.classList.toggle('recording', isRecording);
+  dot.classList.toggle('live', isRecording);
+  label.textContent = isRecording ? 'LIVE' : 'REC';
+}
+
+// Modal
+function openModal() {
+  // Load saved values if remember was checked
+  if (localStorage.getItem('obsRemember') === 'true') {
+    document.getElementById('obsHost').value = localStorage.getItem('obsHost') || 'localhost';
+    document.getElementById('obsPort').value = localStorage.getItem('obsPort') || '4455';
+    document.getElementById('obsPassword').value = localStorage.getItem('obsPassword') || '';
+    document.getElementById('obsRemember').checked = true;
+  }
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function connectOBS() {
+  const h = document.getElementById('obsHost').value;
+  const p = document.getElementById('obsPort').value;
+  const pw = document.getElementById('obsPassword').value;
+  const remember = document.getElementById('obsRemember').checked;
+  
+  if (remember) {
+    localStorage.setItem('obsHost', h);
+    localStorage.setItem('obsPort', p);
+    localStorage.setItem('obsPassword', pw);
+    localStorage.setItem('obsRemember', 'true');
+  } else {
+    localStorage.removeItem('obsHost');
+    localStorage.removeItem('obsPort');
+    localStorage.removeItem('obsPassword');
+    localStorage.removeItem('obsRemember');
+  }
+  
+  closeModal();
+  connectToOBS(h, p, pw);
+}
+
+function autoConnectOBS() {
+  const h = localStorage.getItem('obsHost') || 'localhost';
+  const p = localStorage.getItem('obsPort') || '4455';
+  const pw = localStorage.getItem('obsPassword') || '';
+  connectToOBS(h, p, pw, true);
+}
+
+// Keyboard shortcuts
+window.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+  
+  if (key === 'q') cycleGraph();
+  if (key === '1') expandedZone ? toggleExpand('graph') : setFocus('graph');
+  if (key === '2') expandedZone ? toggleExpand('media') : setFocus('media');
+  if (key === '3') expandedZone ? toggleExpand('comments') : setFocus('comments');
+  if (key === '4') expandedZone ? toggleExpand('source') : setFocus('source');
+  if (key === 'n' || key === 'escape') toggleNotes();
+  if (key === '0' && expandedZone) toggleExpand(expandedZone);
+  if (key === 'escape' && expandedZone) toggleExpand(expandedZone);
+  
+  // Note navigation with arrow keys
+  if (key === 'arrowdown' && speakerNotesOpen && currentTopic?.speakerNotes) {
+    e.preventDefault();
+    activeNoteIndex = Math.min(activeNoteIndex + 1, currentTopic.speakerNotes.length - 1);
+    renderNotes();
+    scrollNoteIntoView();
+  }
+  if (key === 'arrowup' && speakerNotesOpen && currentTopic?.speakerNotes) {
+    e.preventDefault();
+    activeNoteIndex = Math.max(activeNoteIndex - 1, 0);
+    renderNotes();
+    scrollNoteIntoView();
+  }
+});
+
+function scrollNoteIntoView() {
+  const activeNote = document.querySelector('.note-item.active');
+  if (activeNote) activeNote.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Start
+init();
+</script>
+</body>
+</html>

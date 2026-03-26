@@ -1,0 +1,109 @@
+{
+  "id": "bitcoin_spike",
+  "name": "Bitcoin Price Surge",
+  "meta": {
+    "views": "332.2K",
+    "category": "Finance"
+  },
+  "graph": {
+    "states": ["price", "volume", "fear_greed"],
+    "currentState": 0,
+    "data": {
+      "price": {
+        "label": "BTC/USD Price",
+        "type": "line",
+        "data": {
+          "labels": ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "Now"],
+          "datasets": [{
+            "label": "Price (USD)",
+            "data": [67200, 68500, 70100, 72500, 74800, 78200, 79800],
+            "borderColor": "#f7931a",
+            "backgroundColor": "rgba(247, 147, 26, 0.1)",
+            "fill": true,
+            "tension": 0.4
+          }]
+        }
+      },
+      "volume": {
+        "label": "Trading Volume",
+        "type": "bar",
+        "data": {
+          "labels": ["Binance", "Coinbase", "Kraken", "FTX", "Others"],
+          "datasets": [{
+            "label": "Volume (BTC millions)",
+            "data": [12.4, 8.7, 5.2, 3.1, 2.8],
+            "backgroundColor": "#f7931a"
+          }]
+        }
+      },
+      "fear_greed": {
+        "label": "Fear & Greed Index",
+        "type": "doughnut",
+        "data": {
+          "labels": ["Greed (75-100)", "Neutral (45-74)", "Fear (0-44)"],
+          "datasets": [{
+            "data": [68, 24, 8],
+            "backgroundColor": ["#22c55e", "#eab308", "#ef4444"]
+          }]
+        }
+      }
+    }
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "fallback_talk": null,
+    "article": {
+      "title": "Bitcoin Surges Past $78K as Institutional Buying Intensifies",
+      "description": "Major banks and ETF providers report record inflows as retail FOMO kicks in.",
+      "thumbnail": "https://picsum.photos/seed/bitcoin_surge/800/450",
+      "url": "https://news.google.com/search?q=bitcoin+surge+78k",
+      "publisher": "CoinDesk",
+      "published_at": "1 hour ago"
+    }
+  },
+  "reactions": [
+    {
+      "author": "CryptoWhale_Official",
+      "avatar": "https://i.pravatar.cc/150?u=cw1",
+      "text": "Called it at $65K. Now we're flying past $78K. This is just the beginning.",
+      "likes": 4521,
+      "platform": "twitter"
+    },
+    {
+      "author": "BitcoinMaximalist",
+      "avatar": "https://i.pravatar.cc/150?u=bm2",
+      "text": "Institutional money is pouring in. BlackRock, Fidelity, they're all buying.",
+      "likes": 2890,
+      "platform": "reddit"
+    },
+    {
+      "author": "SkepticalEconomist",
+      "avatar": "https://i.pravatar.cc/150?u=se3",
+      "text": "This looks like classic FOMO behavior. The fundamentals haven't changed.",
+      "likes": 1234,
+      "platform": "twitter"
+    },
+    {
+      "author": "TradingView_Pro",
+      "avatar": "https://i.pravatar.cc/150?u=tv4",
+      "text": "Key resistance at $80K. Watch for a potential pullback to $72K.",
+      "likes": 876,
+      "platform": "tradingview"
+    }
+  ],
+  "source": {
+    "title": "Bitcoin Breaks $78,000: Complete Market Analysis",
+    "publisher": "CoinDesk",
+    "url": "https://coindesk.com/btc-78k-analysis",
+    "author": "Bradley Keun",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Bitcoin just hit new highs - look at this price action",
+    "The move happened in just a few hours - massive volume",
+    "Fear & Greed is showing extreme greed now",
+    "Institutional money is clearly driving this",
+    "What's the play here? Let's discuss..."
+  ]
+}

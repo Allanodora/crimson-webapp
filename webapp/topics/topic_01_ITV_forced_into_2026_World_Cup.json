@@ -1,0 +1,173 @@
+{
+  "name": "ITV forced into 2026 World Cup U-turn weeks after massive backlash over in-game ads",
+  "meta": {
+    "category": "⚽ Football",
+    "source": "mirror",
+    "score": 80,
+    "tier": 1,
+    "tier_label": "🔥 Top Story",
+    "flags": [
+      "debatable",
+      "fresh",
+      "core_topic",
+      "story_potential",
+      "take_angle",
+      "cross_pollination",
+      "legit"
+    ],
+    "views": "—"
+  },
+  "graph": {
+    "type": "controversy",
+    "chart": {
+      "label": "World Cup - Public Opinion",
+      "type": "doughnut",
+      "talk_point": "See what people are saying about World Cup",
+      "data": {
+        "labels": [
+          "Against",
+          "For",
+          "Undecided"
+        ],
+        "datasets": [
+          {
+            "label": "Opinion",
+            "data": [
+              45,
+              30,
+              25
+            ],
+            "backgroundColor": [
+              "#EF4444",
+              "#22C55E",
+              "#F59E0B"
+            ],
+            "borderWidth": 0
+          }
+        ]
+      }
+    },
+    "talk_point": "See what people are saying about World Cup"
+  },
+  "media": {
+    "type": "article",
+    "primary_video": null,
+    "article": {
+      "title": "ITV forced into 2026 World Cup U-turn weeks after massive backlash over in-game ads",
+      "description": "ITV has decided against using the controversial feature for this summer's World Cup after the broadcaster faced a significant backlash when it was rolled out for the Six Nations",
+      "thumbnail": "assets/topic_images/topic_396d729fe95e8e55.jpg",
+      "url": "https://www.mirror.co.uk/sport/football/news/itv-world-cup-adverts-fifa-36924164",
+      "publisher": "Mirror",
+      "published_at": "2026-03-25"
+    },
+    "quote_image": {
+      "text": "ITV has decided against using the controversial feature for this summer's World Cup after the broadcaster faced a significant backlash when it was rolled out for the Six Nations.",
+      "image": "assets/topic_images/topic_85c3ca91300f90df.jpg",
+      "summary": "ITV has decided against using the controversial feature for this summer's World Cup after the broadcaster faced a significant backlash when it was rol..."
+    },
+    "video_suggestions": [
+      "World Cup",
+      "2026",
+      "World",
+      "U-turn",
+      "weeks",
+      "massive",
+      "backlash",
+      "over"
+    ],
+    "browser": {
+      "summary": "ITV has decided against using the controversial feature for this summer's World Cup after the broadcaster faced a significant backlash when it was rol.",
+      "keywords": [
+        "World Cup",
+        "2026",
+        "World",
+        "U-turn",
+        "weeks",
+        "massive",
+        "backlash",
+        "over"
+      ],
+      "search_query": "World Cup 2026 World U-turn",
+      "videos": [],
+      "articles": [],
+      "video_suggestions": [
+        "World Cup",
+        "2026",
+        "World",
+        "U-turn",
+        "weeks",
+        "massive",
+        "backlash",
+        "over"
+      ],
+      "has_content": false
+    }
+  },
+  "reactions": [
+    {
+      "author": "u_GiveMeSomeSunshine3",
+      "avatar": "https://i.pravatar.cc/150?u=GiveMeSo",
+      "text": "India are the ICC Men's T20 World Cup 2026 Champions, 3rd title, 2nd in a row and 1st to win at home.",
+      "likes": 6501,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/Cricket/comments/1roab17/india_are_the_icc_mens_t20_world_cup_2026/",
+      "replies": 879,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_Vegetable_Band_2341",
+      "avatar": "https://i.pravatar.cc/150?u=Vegetabl",
+      "text": "2026 world cup is kinda odd and tbh that should be a major issue",
+      "likes": 849,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/worldcup/comments/1rkrxkt/2026_world_cup_is_kinda_odd_and_tbh_that_should/",
+      "replies": 927,
+      "keyword_matches": 3,
+      "subreddit": "r/chelseafc"
+    },
+    {
+      "author": "u_Vegetable_Band_2341",
+      "avatar": "https://i.pravatar.cc/150?u=Vegetabl",
+      "text": "2026 world cup is kinda odd and tbh that should be a major issue",
+      "likes": 844,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/worldcup/comments/1rkrxkt/2026_world_cup_is_kinda_odd_and_tbh_that_should/",
+      "replies": 927,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    },
+    {
+      "author": "u_Vegetable_Band_2341",
+      "avatar": "https://i.pravatar.cc/150?u=Vegetabl",
+      "text": "2026 world cup is kinda odd and tbh that should be a major issue",
+      "likes": 843,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/worldcup/comments/1rkrxkt/2026_world_cup_is_kinda_odd_and_tbh_that_should/",
+      "replies": 927,
+      "keyword_matches": 3,
+      "subreddit": "r/premierleague"
+    },
+    {
+      "author": "u_Amazing-Note-1196",
+      "avatar": "https://i.pravatar.cc/150?u=Amazing-",
+      "text": "Does anyone else feel like the 2026 World Cup is getting zero hype compared to previous ones?",
+      "likes": 547,
+      "platform": "reddit",
+      "url": "https://reddit.com/r/football/comments/1ryoo4d/does_anyone_else_feel_like_the_2026_world_cup_is/",
+      "replies": 186,
+      "keyword_matches": 3,
+      "subreddit": "r/soccer"
+    }
+  ],
+  "source": {
+    "title": "ITV forced into 2026 World Cup U-turn weeks after massive backlash over in-game ads",
+    "publisher": "Mirror",
+    "url": "https://www.mirror.co.uk/sport/football/news/itv-world-cup-adverts-fifa-36924164",
+    "author": "",
+    "verified": true
+  },
+  "speakerNotes": [
+    "Story: ITV forced into 2026 World Cup U-turn weeks after massive backlash over in-game "
+  ]
+}
