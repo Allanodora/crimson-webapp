@@ -4,6 +4,11 @@ Generate trending topic videos with CLI + Web App + OBS.
 
 ## Quick Start
 
+Run everything (fetch/score/generate topics + serve the webapp):
+```bash
+python3 start.py
+```
+
 ### 1. Generate Assets
 ```bash
 cd cli
