@@ -22,6 +22,13 @@ FEEDS = [
         "category": "football",
         "core_boost": True,
     },
+    # Backup football source (keeps pipeline consistent if a major feed is down)
+    {
+        "url": "https://www.theguardian.com/football/rss",
+        "source": "guardian_football",
+        "category": "football",
+        "core_boost": True,
+    },
     {
         "url": "https://www.skysports.com/rss/12040",
         "source": "sky_sports",
@@ -44,6 +51,13 @@ FEEDS = [
     {
         "url": "https://www.xxlmag.com/feed/",
         "source": "xxl",
+        "category": "hiphop",
+        "core_boost": False,
+    },
+    # Backup hip-hop source
+    {
+        "url": "https://www.hotnewhiphop.com/rss.xml",
+        "source": "hotnewhiphop",
         "category": "hiphop",
         "core_boost": False,
     },
@@ -78,6 +92,13 @@ FEEDS = [
         "category": "ai_tech",
         "core_boost": False,
     },
+    # Backup tech source (very reliable RSS)
+    {
+        "url": "https://news.ycombinator.com/rss",
+        "source": "hackernews",
+        "category": "ai_tech",
+        "core_boost": False,
+    },
     # General Trending
     {
         "url": "https://feeds.bbci.co.uk/news/rss.xml",
@@ -88,6 +109,13 @@ FEEDS = [
     {
         "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
         "source": "nytimes",
+        "category": "trending_general",
+        "core_boost": False,
+    },
+    # Backup general news source
+    {
+        "url": "https://feeds.npr.org/1001/rss.xml",
+        "source": "npr",
         "category": "trending_general",
         "core_boost": False,
     },
@@ -197,8 +225,19 @@ def fetch_all() -> list:
         stories = fetch_feed(feed)
         all_stories.extend(stories)
 
-    print(f"[RSS Fetcher] Total: {len(all_stories)} stories fetched")
-    return all_stories
+    # De-dupe by URL (some sources syndicate the same story)
+    deduped = []
+    seen_urls = set()
+    for s in all_stories:
+        u = (s.get("url") or "").strip()
+        if u and u in seen_urls:
+            continue
+        if u:
+            seen_urls.add(u)
+        deduped.append(s)
+
+    print(f"[RSS Fetcher] Total: {len(deduped)} stories fetched")
+    return deduped
 
 
 if __name__ == "__main__":
